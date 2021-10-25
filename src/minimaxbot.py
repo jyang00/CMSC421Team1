@@ -11,9 +11,10 @@ Coding strategy:
 
 class MinimaxBot:
   
-  def __init(self, game, piece):
+  def __init(self, game, piece, oppPiece):
     self.game = game
     self.piece = piece
+    self.oppPiece = oppPiece
     
   def getNextMove(self, currGame, depth):
     moveList = currGame.availableMoves()
@@ -21,11 +22,11 @@ class MinimaxBot:
     for move in moveList:
       temp = currGame.copy()
       temp.nextMove(move, self.piece)
-      values.append(self.minimaxAlg(temp, depth-1))
+      values.append(self.maxAlg(temp, depth-1))
     bestMove = moveList[values.index(max(values))]
     return bestMove
   
-  def minimaxAlg(self, currGame, depth):
+  def maxAlg(self, currGame, depth):
     if(depth == 1):
       return self.heuristicAlg(currGame)
     else:
@@ -35,9 +36,22 @@ class MinimaxBot:
       for move in currGame.availableMoves():
         temp = currGame.copy()
         temp.nextMove(move, self.piece)
-        values.append(self.minimaxAlg(temp, depth-1))
+        values.append(self.miniAlg(temp, depth-1))
       return max(values)
-    
+  
+  def miniAlg(self, currGame, depth):
+    if(depth == 1):
+      return self.heuristicAlg(currGame)
+    else:
+      if(len(currGame.availableMoves()) == 0):
+        return self.heuristicAlg(currGame)
+      values = []
+      for move in currGame.availableMoves():
+        temp = currGame.copy()
+        temp.nextMove(move, self.oppPiece)
+        values.append(self.maxAlg(temp, depth-1))
+      return min(values)
+  
   def heuristicAlg(self, currGame):
     # Currently left blank, but make sure it returns a massive value on game 
     # win, a negative massive value on game loss, and everything in between
