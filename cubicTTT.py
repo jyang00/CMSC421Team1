@@ -269,6 +269,5 @@ class CubicTicTacToe:
 
     def copy(self):
         return copy.deepcopy(self)
-    # I am not sure the performance impact deepcopy will have
-    # But it might be significant with how many times we need to copy boards
-    # There might be a more efficient way. IDK yet
+    # I am not sure atm the performance impact deepcopy
+    # will have on our project.
