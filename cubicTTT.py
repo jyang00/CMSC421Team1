@@ -113,7 +113,7 @@ class CubicTicTacToe:
         if player == "X": 
             self.x_moves.append((side,pos))
         if player == "O": 
-            self.x_moves.append((side,pos))  
+            self.o_moves.append((side,pos))  
         if pos in self.open_moves[self.sides.index(side)]: 
             self.open_moves[self.sides.index(side)].remove(pos)
 
@@ -187,7 +187,7 @@ class CubicTicTacToe:
             if player == "X":
                 self.x_score += 1
                 self.x_wins.append(side)
-            if player == "Y":
+            if player == "O":
                 self.o_score += 1
                 self.o_wins.append(side)
 
@@ -234,7 +234,7 @@ class CubicTicTacToe:
         print(f"X wins:{game.x_wins}")
         print(f"X moves:{game.x_moves}\n")
         print(f"O Score:{game.o_score}")
-        print(f"O wins:{game.o_score}")
+        print(f"O wins:{game.o_wins}")
         print(f"O moves:{game.o_moves}\n")
         print(f"Tied Sides:{game.sides_tied}")
         print(f"winnable Sides:{game.winnable_sides}")
@@ -267,7 +267,7 @@ class CubicTicTacToe:
         for i in back:
             print('%30s' % (i))
 
+    # Not entirely sure how impactful deepcopy 
+    # will have on performance with the amount we copy
     def copy(self):
         return copy.deepcopy(self)
-    # I am not sure atm the performance impact deepcopy
-    # will have on our project.
