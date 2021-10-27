@@ -48,7 +48,7 @@ class CubicTicTacToe:
     #       (1) that returns just 1D/2D lists
     #       (2) that returns 1D list of tuples (might be easier to follow/debug)
     #
-    # - If you can think of a better name scheme for these methods, lmk lol
+    # - Not the best naming schemes, sorry lol
     # - We should remove copying if no one is 100% not modifying the return lists for performance?
 
     # 2D list representation for the total possible board moves
@@ -119,9 +119,9 @@ class CubicTicTacToe:
 
         self.move_piece(player,side,pos)  # Perform Move
         self.touch_edges(player,side,pos) # Move on edges
-        for s in self.sides:
-            self.check_side_win(player, s)
-        self.check_side_tie(side)         
+        for s in self.sides:              # Check side wins/ties 
+            self.check_side_win(player,s)
+            self.check_side_tie(s)         
         self.check_win()                  
         return True
 
@@ -190,7 +190,6 @@ class CubicTicTacToe:
             if player == "Y":
                 self.o_score += 1
                 self.o_wins.append(side)
-
 
     # A tie is a side that is full with no winner
     def check_side_tie(self, side):
