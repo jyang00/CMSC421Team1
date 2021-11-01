@@ -6,13 +6,14 @@ Coding strategy:
   - Recursive method that goes through every possible move one after the other
   - Uses alpha-beta pruning to trim down the number of branches it actually has to traverse
 """
-# NOTE: Need getNextMove to handle the case where it is called with only 1 move left
+
 
 # Alpha = maxes, Beta = mins
 class MinimaxBot:
   
   
   def __init(self, game, piece, oppPiece):
+    #This doesn't actually get used
     self.game = game
     self.piece = piece
     self.oppPiece = oppPiece
@@ -22,6 +23,11 @@ class MinimaxBot:
   #This works like the maxAlg, but needs a different return
   def getNextMove(self, currGame, depth):
     moveList = currGame.availableMoves()
+    
+    if len(moveList) == 0 or depth < 1:
+      #Not sure how to handle this case
+      return -1
+    
     alpha = self.MIN_VAL
     beta = self.MAX_VAL
     for move in moveList:
@@ -35,7 +41,7 @@ class MinimaxBot:
   
   def maxAlg(self, currGame, depth, alpha, beta):
     #Check if we are at the depth limit, if so, return heuristic
-    if(depth == 1):
+    if(depth == 0):
       return self.heuristicAlg(currGame)
     else:
       #Check if there are more moves, if not, return heuristic
