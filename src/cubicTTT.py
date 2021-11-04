@@ -230,16 +230,16 @@ class CubicTicTacToe:
 
     def display_stats(self):
         print('-'*40)
-        print(f"X Score:{game.x_score}")
-        print(f"X wins:{game.x_wins}")
-        print(f"X moves:{game.x_moves}\n")
-        print(f"O Score:{game.o_score}")
-        print(f"O wins:{game.o_wins}")
-        print(f"O moves:{game.o_moves}\n")
-        print(f"Tied Sides:{game.sides_tied}")
-        print(f"winnable Sides:{game.winnable_sides}")
-        print(f"Game over:{game.is_game_over}")
-        print(f"Game winner:{game.game_winner}")
+        print(f"X Score:{self.x_score}")
+        print(f"X wins:{self.x_wins}")
+        print(f"X moves:{self.x_moves}\n")
+        print(f"O Score:{self.o_score}")
+        print(f"O wins:{self.o_wins}")
+        print(f"O moves:{self.o_moves}\n")
+        print(f"Tied Sides:{self.sides_tied}")
+        print(f"winnable Sides:{self.winnable_sides}")
+        print(f"Game over:{self.is_game_over}")
+        print(f"Game winner:{self.game_winner}")
         print('-'*40)
 
     # Prints the current state of the game board like an unraveled cube.
