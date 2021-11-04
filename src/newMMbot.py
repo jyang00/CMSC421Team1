@@ -53,7 +53,8 @@ class MinimaxBot:
       self.moveID = moveID #Right now, the parent passes the moveID with the move already applied
       #self.moveID = self.applyMove(currMove, moveID)
       self.Outer = Outer
-      self.pos = {  1 : ("top", 0),
+      self.pos = {  -1: ("", -1),
+                    1 : ("top", 0),
                     2 : ("top", 1),
                     3 : ("top", 2),
                     4 : ("top", 3),
@@ -71,18 +72,19 @@ class MinimaxBot:
                     16 : ("bottom", 6),
                     17 : ("bottom", 7),
                     18 : ("bottom", 8),
-                    19 : ("front", 4),
-                    20 : ("front", 5),
-                    21 : ("front", 6),
-                    22 : ("back", 4),
-                    23 : ("back", 5),
-                    24 : ("back", 6),
-                    25 : ("left", 5),
-                    26 : ("right", 5)}
+                    19 : ("front", 3),
+                    20 : ("front", 4),
+                    21 : ("front", 5),
+                    22 : ("back", 3),
+                    23 : ("back", 4),
+                    24 : ("back", 5),
+                    25 : ("left", 4),
+                    26 : ("right", 4)}
       self.alpha = alpha
       self.beta = beta
       self.isMax = isMax
       self.player = player
+      self.leaf = False
       
       moveList = self.getMoves(moveID)
       if(len(moveList) != 0):
@@ -90,8 +92,8 @@ class MinimaxBot:
         for move in moveList:
           newMoveID = self.applyMove(move, self.moveID)
           #Check table for duplicate
-          if not(self.Outer.nodeTable.has_key(newMoveID)):
-            child = MinimaxBot.Node(Outer, move, self.moveID, self.alpha, self.beta, (1 + self.isMax) % 2, (self.player)%2 + 1)
+          if newMoveID not in self.Outer.nodeTable:
+            child = MinimaxBot.Node(Outer, move, newMoveID, self.alpha, self.beta, (1 + self.isMax) % 2, (self.player)%2 + 1)
             self.children.append(child)
             self.Outer.nodeTable[newMoveID] = child
           #If duplicate, add a link from this node to that child
@@ -100,13 +102,13 @@ class MinimaxBot:
       #This means no children, so must be a leaf node
       else:
         currGame = self.makeGame(self.moveID)
-        self.value = self.heuristicAlg(currGame)
+        self.value = self.Outer.heuristicAlg(currGame)
         self.leaf = True
       
       if isMax:
-        self.alpha = self.getValue()
+        self.alpha = self.getValue()[0]
       else:
-        self.beta = self.getValue()
+        self.beta = self.getValue()[0]
     
     
     # Returns the best value along with the move used to get there
@@ -116,22 +118,24 @@ class MinimaxBot:
       else:
         #If max node, use alpha + maxes
         if self.isMax:
-          maxVal = self.alpha
+          maxVal = self.Outer.MIN_VAL
           for child in self.children:
-            currVal = child.getValue()
+            result = child.getValue()
+            currVal = result[0]
             if(currVal > maxVal):
               maxVal = currVal
-              bestMove = child.currMove
+              bestMove = result[1]
           return (maxVal, bestMove)
         #If min node, use beta + mins
         else:
-          minVal = self.beta
+          minVal = self.Outer.MAX_VAL
           for child in self.children:
-            currVal = child.getValue()
+            result = child.getValue()
+            currVal = result[0]
             if(currVal < minVal):
               minVal = currVal
-              bestMove = child.currMove
-          return (maxVal, bestMove)
+              bestMove = result[1]
+          return (minVal, bestMove)
       
       
     # Gets all open moves for the current moveset
@@ -139,9 +143,9 @@ class MinimaxBot:
       moveList = []
       for i in range(1,27):
         # This gets the digit at position i
-        thisMove = math.floor(moveID / pow(10, 26-i)) % 10
-        
-        if thisMove == 0:
+        #thisMove = math.floor(moveID / pow(10, 26-i)) % 10
+        thisMove = moveID[i-1]
+        if thisMove == '0':
           moveList.append(i)
       return moveList
     
@@ -152,15 +156,15 @@ class MinimaxBot:
       
       for i in range(1,27):
         # This gets the digit at position i
-        thisMove = math.floor(moveID / pow(10, 26-i)) % 10
-        
+        #thisMove = math.floor(moveID / pow(10, 26-i)) % 10
+        thisMove = moveID[i-1]
         # 1 means 1st player's move
-        if thisMove == 1:
-          position = self.pos(i) # Side, cell pair
+        if thisMove == '1':
+          position = self.pos[i] # Side, cell pair
           game.make_move(game.first_player(), position[0], position[1])
         # 2 means 2nd player's move
-        elif thisMove == 2:
-          position = self.pos(i) # Side, cell pair
+        elif thisMove == '2':
+          position = self.pos[i] # Side, cell pair
           game.make_move(game.second_player(), position[0], position[1])
         # 0 means no move, so I don't need to record it    
       return game
@@ -168,7 +172,8 @@ class MinimaxBot:
     
     # Applies a move to the current moveset
     def applyMove(self, currMove, moveID):
-      moveID = moveID + self.player * pow(10, 26 - (currMove))
+      #moveID = moveID + self.player * pow(10, 26 - (currMove))
+      moveID = moveID[0:(currMove-1)] + str(self.player) + moveID[currMove:]
       return moveID
     
     
@@ -201,67 +206,77 @@ class MinimaxBot:
     #currMove = -1 means it is the first node and there isn't a move yet
     moveID = self.convertGame(currGame)
     self.root = MinimaxBot.Node(self, -1, moveID, self.MIN_VAL, self.MAX_VAL, 1, self.player)
-    self.root.getValue()
+    self.nodeTable[moveID] = self.root
+    #self.root.getValue()
     
   def evalPosition(self, currGame):
     moveID = self.convertGame(currGame)
     currNode = self.nodeTable[moveID]
-    return currNode.getValue()
+    #getValue returns a (value, move) pair, and pos matches that move in my schema to the actual move (side, position)
+    return currNode.pos[currNode.getValue()[1]]
     
   #Convert the game from a board to my integer format
   def convertGame(self, currGame):
-    moveID = 0
+    moveID = "00000000000000000000000000"
     cube = currGame.cube
     #Handle the top face
-    for i in range(1,10):
-      currPiece = cube["top"][i - 1]
+    for i in range(0,9):
+      currPiece = cube["top"][i]
       #Check which piece is in this position
       if currPiece == self.piece:
-        moveID = moveID + self.player * pow(10, 26 - i)
+        #moveID = moveID + self.player * pow(10, 26 - i)
+        moveID = moveID[0:i] + str(self.player) + moveID[(i + 1):]
       elif currPiece == self.oppPiece:
-        moveID = moveID + ((self.player % 2) + 1) * pow(10, 26 - i)
-        
+        #moveID = moveID + ((self.player % 2) + 1) * pow(10, 26 - i)
+        moveID = moveID[0:i] + str((self.player % 2) + 1) + moveID[(i + 1):]
     #Handle the bottom face
-    for i in range(1,10):
-      currPiece = cube["bottom"][i - 1]
+    for i in range(0,9):
+      currPiece = cube["bottom"][i]
       #Check which piece is in this position
       if currPiece == self.piece:
-        moveID = moveID + self.player * pow(10, 26 - 9 - i)
+        #moveID = moveID + self.player * pow(10, 26 - 9 - i)
+        moveID = moveID[0:9+i] + str(self.player) + moveID[(9 + i + 1):]
       elif currPiece == self.oppPiece:
-        moveID = moveID + ((self.player % 2) + 1) * pow(10, 26 - 9 - i)
-    
+        #moveID = moveID + ((self.player % 2) + 1) * pow(10, 26 - 9 - i)
+        moveID = moveID[0:9+i] + str((self.player % 2) + 1) + moveID[(9 + i + 1):]
     #Handle the front face
-    for i in range(4,7):
-      currPiece = cube["front"][i - 1]
+    for i in range(3,6):
+      currPiece = cube["front"][i]
+      j = i - 3
       #Check which piece is in this position
       if currPiece == self.piece:
-        moveID = moveID + self.player * pow(10, 26 - 18 - i)
+        #moveID = moveID + self.player * pow(10, 26 - 18 - i)
+        moveID = moveID[0:18+j] + str(self.player) + moveID[(18 + j + 1):]
       elif currPiece == self.oppPiece:
-        moveID = moveID + ((self.player % 2) + 1) * pow(10, 26 - 18 - i)
-    
+        #moveID = moveID + ((self.player % 2) + 1) * pow(10, 26 - 18 - i)
+        moveID = moveID[0:18+j] + str((self.player % 2) + 1) + moveID[(18 + j + 1):]
     #Handle the back face
-    for i in range(4,7):
-      currPiece = cube["back"][i - 1]
+    for i in range(3,6):
+      currPiece = cube["back"][i]
+      j = i - 3
       #Check which piece is in this position
       if currPiece == self.piece:
-        moveID = moveID + self.player * pow(10, 26 - 21 - i)
+        #moveID = moveID + self.player * pow(10, 26 - 21 - i)
+        moveID = moveID[0:21+j] + str(self.player) + moveID[(21 + j + 1):]
       elif currPiece == self.oppPiece:
-        moveID = moveID + ((self.player % 2) + 1) * pow(10, 26 - 21 - i)
-    
+        #moveID = moveID + ((self.player % 2) + 1) * pow(10, 26 - 21 - i)
+        moveID = moveID[0:21+j] + str((self.player % 2) + 1) + moveID[(21 + j + 1):]
     #Handle left middle
     currPiece = cube["left"][4]
     if currPiece == self.piece:
-      moveID = moveID + self.player * pow(10, 1)
+      #moveID = moveID + self.player * pow(10, 1)
+      moveID = moveID[0:24] + str(self.player) + moveID[(24 + 1):]
     elif currPiece == self.oppPiece:
-      moveID = moveID + ((self.player % 2) + 1) * pow(10, 1)
-      
+      #moveID = moveID + ((self.player % 2) + 1) * pow(10, 1)
+      moveID = moveID[0:24] + str((self.player % 2) + 1) + moveID[(24 + 1):]
     #Handle right middle
     currPiece = cube["right"][4]
     if currPiece == self.piece:
-      moveID = moveID + self.player * pow(10, 0)
+      #moveID = moveID + self.player * pow(10, 0)
+      moveID = moveID[0:25] + str(self.player)
     elif currPiece == self.oppPiece:
-      moveID = moveID + ((self.player % 2) + 1) * pow(10, 0)
-    
+      #moveID = moveID + ((self.player % 2) + 1) * pow(10, 0)
+      moveID = moveID[0:25] + str((self.player % 2) + 1)
     return moveID
     
     

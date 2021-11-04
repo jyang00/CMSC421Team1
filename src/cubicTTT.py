@@ -107,7 +107,7 @@ class CubicTicTacToe:
     def make_move(self, player, side, pos):
         side = self.side_string(side)
 
-        if not self.can_move(side,pos) or self.is_game_over:
+        if not self.can_move(side,pos): #or self.is_game_over:
             return False # Invalid move / Game ended
 
         if player == "X": 
