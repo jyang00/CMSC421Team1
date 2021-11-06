@@ -103,6 +103,7 @@ class MinimaxBot:
       else:
         currGame = self.makeGame(self.moveID)
         self.value = self.Outer.heuristicAlg(currGame)
+        #self.value = 0 ## REMOVE LATER
         self.leaf = True
       
       if isMax:
@@ -120,7 +121,8 @@ class MinimaxBot:
         if self.isMax:
           maxVal = self.Outer.MIN_VAL
           for child in self.children:
-            result = child.getValue()
+            result = child.beta
+            #result = child.getValue()
             currVal = result[0]
             if(currVal > maxVal):
               maxVal = currVal
@@ -130,7 +132,8 @@ class MinimaxBot:
         else:
           minVal = self.Outer.MAX_VAL
           for child in self.children:
-            result = child.getValue()
+            result = child.alpha
+            #result = child.getValue()
             currVal = result[0]
             if(currVal < minVal):
               minVal = currVal
