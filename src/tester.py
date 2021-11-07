@@ -30,12 +30,14 @@ game.make_move('O', "bottom", 7)
 game.make_move('O', "bottom", 8)
 
 game.make_move('X', "front", 4)
+
 game.make_move('X', "top", 4)
-game.make_move('O', "bottom", 4)
+
+#game.make_move('O', "bottom", 4)
 
 ##### Takes about 3 minutes, 18 seconds to do the above (198 seconds)
 
-game.make_move('O', "back", 4)
+#game.make_move('O', "back", 4)
 
 ##### Takes about 18 seconds to do the above
 
@@ -50,8 +52,8 @@ game.make_move('O', "back", 4)
 #game.make_move('O', "back", 3)
 #game.make_move('O', "back", 5)
 
-# game.make_move('X', "top", 5)
-# game.make_move('O', "bottom", 3)
+#game.make_move('X', "top", 5)
+#game.make_move('O', "bottom", 3)
 
 ## remove these later
 

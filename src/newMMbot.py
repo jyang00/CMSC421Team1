@@ -121,7 +121,7 @@ class MinimaxBot:
         if self.isMax:
           maxVal = self.Outer.MIN_VAL
           for child in self.children:
-            result = child.beta
+            result = (child.beta, child.currMove)
             #result = child.getValue()
             currVal = result[0]
             if(currVal > maxVal):
@@ -132,7 +132,7 @@ class MinimaxBot:
         else:
           minVal = self.Outer.MAX_VAL
           for child in self.children:
-            result = child.alpha
+            result = (child.alpha, child.currMove)
             #result = child.getValue()
             currVal = result[0]
             if(currVal < minVal):
@@ -146,9 +146,9 @@ class MinimaxBot:
       moveList = []
       for i in range(1,27):
         # This gets the digit at position i
-        #thisMove = math.floor(moveID / pow(10, 26-i)) % 10
-        thisMove = moveID[i-1]
-        if thisMove == '0':
+        thisMove = (moveID // pow(10, 26 - i)) % 10
+        #thisMove = moveID[i-1]
+        if thisMove == 0:
           moveList.append(i)
       return moveList
     
@@ -159,14 +159,14 @@ class MinimaxBot:
       
       for i in range(1,27):
         # This gets the digit at position i
-        #thisMove = math.floor(moveID / pow(10, 26-i)) % 10
-        thisMove = moveID[i-1]
+        thisMove = (moveID // pow(10, 26 - i)) % 10
+        #thisMove = moveID[i-1]
         # 1 means 1st player's move
-        if thisMove == '1':
+        if thisMove == 1:
           position = self.pos[i] # Side, cell pair
           game.make_move(game.first_player(), position[0], position[1])
         # 2 means 2nd player's move
-        elif thisMove == '2':
+        elif thisMove == 2:
           position = self.pos[i] # Side, cell pair
           game.make_move(game.second_player(), position[0], position[1])
         # 0 means no move, so I don't need to record it    
@@ -175,8 +175,8 @@ class MinimaxBot:
     
     # Applies a move to the current moveset
     def applyMove(self, currMove, moveID):
-      #moveID = moveID + self.player * pow(10, 26 - (currMove))
-      moveID = moveID[0:(currMove-1)] + str(self.player) + moveID[currMove:]
+      moveID = moveID + self.player * pow(10, 26 - (currMove))
+      #moveID = moveID[0:(currMove-1)] + str(self.player) + moveID[currMove:]
       return moveID
     
     
@@ -220,126 +220,70 @@ class MinimaxBot:
     
   #Convert the game from a board to my integer format
   def convertGame(self, currGame):
-    moveID = "00000000000000000000000000"
+    #moveID = "00000000000000000000000000"
+    moveID = 0
     cube = currGame.cube
     #Handle the top face
     for i in range(0,9):
       currPiece = cube["top"][i]
       #Check which piece is in this position
       if currPiece == self.piece:
-        #moveID = moveID + self.player * pow(10, 26 - i)
-        moveID = moveID[0:i] + str(self.player) + moveID[(i + 1):]
+        moveID = moveID + self.player * pow(10, 26 - (i + 1))
+        #moveID = moveID[0:i] + str(self.player) + moveID[(i + 1):]
       elif currPiece == self.oppPiece:
-        #moveID = moveID + ((self.player % 2) + 1) * pow(10, 26 - i)
-        moveID = moveID[0:i] + str((self.player % 2) + 1) + moveID[(i + 1):]
+        moveID = moveID + ((self.player % 2) + 1) * pow(10, 26 + i)
+        #moveID = moveID[0:i] + str((self.player % 2) + 1) + moveID[(i + 1):]
     #Handle the bottom face
     for i in range(0,9):
       currPiece = cube["bottom"][i]
       #Check which piece is in this position
       if currPiece == self.piece:
-        #moveID = moveID + self.player * pow(10, 26 - 9 - i)
-        moveID = moveID[0:9+i] + str(self.player) + moveID[(9 + i + 1):]
+        moveID = moveID + self.player * pow(10, 26 - 9 - (i + 1))
+        #moveID = moveID[0:9+i] + str(self.player) + moveID[(9 + i + 1):]
       elif currPiece == self.oppPiece:
-        #moveID = moveID + ((self.player % 2) + 1) * pow(10, 26 - 9 - i)
-        moveID = moveID[0:9+i] + str((self.player % 2) + 1) + moveID[(9 + i + 1):]
+        moveID = moveID + ((self.player % 2) + 1) * pow(10, 26 - 9 - (i + 1))
+        #moveID = moveID[0:9+i] + str((self.player % 2) + 1) + moveID[(9 + i + 1):]
     #Handle the front face
     for i in range(3,6):
       currPiece = cube["front"][i]
       j = i - 3
       #Check which piece is in this position
       if currPiece == self.piece:
-        #moveID = moveID + self.player * pow(10, 26 - 18 - i)
-        moveID = moveID[0:18+j] + str(self.player) + moveID[(18 + j + 1):]
+        moveID = moveID + self.player * pow(10, 26 - 18 - (j + 1))
+        #moveID = moveID[0:18+j] + str(self.player) + moveID[(18 + j + 1):]
       elif currPiece == self.oppPiece:
-        #moveID = moveID + ((self.player % 2) + 1) * pow(10, 26 - 18 - i)
-        moveID = moveID[0:18+j] + str((self.player % 2) + 1) + moveID[(18 + j + 1):]
+        moveID = moveID + ((self.player % 2) + 1) * pow(10, 26 - 18 - (j + 1))
+        #moveID = moveID[0:18+j] + str((self.player % 2) + 1) + moveID[(18 + j + 1):]
     #Handle the back face
     for i in range(3,6):
       currPiece = cube["back"][i]
       j = i - 3
       #Check which piece is in this position
       if currPiece == self.piece:
-        #moveID = moveID + self.player * pow(10, 26 - 21 - i)
-        moveID = moveID[0:21+j] + str(self.player) + moveID[(21 + j + 1):]
+        moveID = moveID + self.player * pow(10, 26 - 21 - (j + 1))
+        #moveID = moveID[0:21+j] + str(self.player) + moveID[(21 + j + 1):]
       elif currPiece == self.oppPiece:
-        #moveID = moveID + ((self.player % 2) + 1) * pow(10, 26 - 21 - i)
-        moveID = moveID[0:21+j] + str((self.player % 2) + 1) + moveID[(21 + j + 1):]
+        moveID = moveID + ((self.player % 2) + 1) * pow(10, 26 - 21 - (j + 1))
+        #moveID = moveID[0:21+j] + str((self.player % 2) + 1) + moveID[(21 + j + 1):]
     #Handle left middle
     currPiece = cube["left"][4]
     if currPiece == self.piece:
-      #moveID = moveID + self.player * pow(10, 1)
-      moveID = moveID[0:24] + str(self.player) + moveID[(24 + 1):]
+      moveID = moveID + self.player * pow(10, 1)
+      #moveID = moveID[0:24] + str(self.player) + moveID[(24 + 1):]
     elif currPiece == self.oppPiece:
-      #moveID = moveID + ((self.player % 2) + 1) * pow(10, 1)
-      moveID = moveID[0:24] + str((self.player % 2) + 1) + moveID[(24 + 1):]
+      moveID = moveID + ((self.player % 2) + 1) * pow(10, 1)
+      #moveID = moveID[0:24] + str((self.player % 2) + 1) + moveID[(24 + 1):]
     #Handle right middle
     currPiece = cube["right"][4]
     if currPiece == self.piece:
-      #moveID = moveID + self.player * pow(10, 0)
-      moveID = moveID[0:25] + str(self.player)
+      moveID = moveID + self.player * pow(10, 0)
+      #moveID = moveID[0:25] + str(self.player)
     elif currPiece == self.oppPiece:
-      #moveID = moveID + ((self.player % 2) + 1) * pow(10, 0)
-      moveID = moveID[0:25] + str((self.player % 2) + 1)
+      moveID = moveID + ((self.player % 2) + 1) * pow(10, 0)
+      #moveID = moveID[0:25] + str((self.player % 2) + 1)
     return moveID
     
     
-    
-  #This works like the maxAlg, but needs a different return
-  def getNextMove(self, currGame, depth):
-    moveList = currGame.availableMoves()
-    
-    if len(moveList) == 0 or depth < 1:
-      #Not sure how to handle this case
-      return -1
-    
-    alpha = self.MIN_VAL
-    beta = self.MAX_VAL
-    for move in moveList:
-      temp = currGame.copy()
-      temp.nextMove(move, self.piece)
-      value = self.miniAlg(temp, depth-1, alpha, beta)
-      if(value > alpha):
-        alpha = value
-        bestMove = move
-    return bestMove
-  
-  def maxAlg(self, currGame, depth, alpha, beta):
-    #Check if we are at the depth limit, if so, return heuristic
-    if(depth == 0):
-      return self.heuristicAlg(currGame)
-    else:
-      #Check if there are more moves, if not, return heuristic
-      if(len(currGame.availableMoves()) == 0):
-        return self.heuristicAlg(currGame)
-      #Go through every move, copy the game, apply a move, call the min part.
-      for move in currGame.availableMoves():
-        temp = currGame.copy()
-        temp.nextMove(move, self.piece)
-        value = self.miniAlg(temp, depth-1, alpha, beta)
-        if(value > alpha):
-          alpha = value
-        if(alpha > beta):
-          break
-      return value
-  
-  def miniAlg(self, currGame, depth, alpha, beta):
-    #Check if we are at the depth limit, if so, return heuristic
-    if(depth == 1):
-      return self.heuristicAlg(currGame)
-    else:
-      #Check if there are more moves, if not, return heuristic
-      if(len(currGame.availableMoves()) == 0):
-        return self.heuristicAlg(currGame)
-      #Go through every move, copy the game, apply a move, call the max part.
-      for move in currGame.availableMoves():
-        temp = currGame.copy()
-        temp.nextMove(move, self.oppPiece)
-        value = self.maxAlg(temp, depth-1, alpha, beta)
-        if(value < beta):
-          beta = value
-        if(beta < alpha):
-          break
-      return value
   
   def heuristicAlg(self, currGame):
     # Currently left blank, but make sure it returns a massive value on game 
