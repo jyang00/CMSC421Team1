@@ -8,7 +8,6 @@ Coding strategy:
 """
 
 import cubicTTT
-import math
 
 # Alpha = maxes, Beta = mins
 class MinimaxBot:
@@ -51,7 +50,6 @@ class MinimaxBot:
       #currMove is an integer from 1 to 26, representing which digit we're on (left to right)
       self.currMove = currMove
       self.moveID = moveID #Right now, the parent passes the moveID with the move already applied
-      #self.moveID = self.applyMove(currMove, moveID)
       self.Outer = Outer
       self.pos = {  -1: ("", -1),
                     1 : ("top", 0),
@@ -147,7 +145,6 @@ class MinimaxBot:
       for i in range(1,27):
         # This gets the digit at position i
         thisMove = (moveID // pow(10, 26 - i)) % 10
-        #thisMove = moveID[i-1]
         if thisMove == 0:
           moveList.append(i)
       return moveList
@@ -160,7 +157,6 @@ class MinimaxBot:
       for i in range(1,27):
         # This gets the digit at position i
         thisMove = (moveID // pow(10, 26 - i)) % 10
-        #thisMove = moveID[i-1]
         # 1 means 1st player's move
         if thisMove == 1:
           position = self.pos[i] # Side, cell pair
@@ -176,7 +172,6 @@ class MinimaxBot:
     # Applies a move to the current moveset
     def applyMove(self, currMove, moveID):
       moveID = moveID + self.player * pow(10, 26 - (currMove))
-      #moveID = moveID[0:(currMove-1)] + str(self.player) + moveID[currMove:]
       return moveID
     
     
@@ -186,18 +181,13 @@ class MinimaxBot:
       # TODO - Finish calculateTree to make the first node and start the process
       # - Add a depth argument and make it stop when it hits that depth
       #   This will require throwing away of useless data and applying a move to start
-      # - Make the nodes return the (side, cell) instead of my int position
-      # (Just need to use my translator table that takes 1 to 26 and outputs (side, cell))
       # - Add alpha-beta pruning when evaluating
-      # - Test if working
+      # - Add in heuristic
       # - Add duplicate checking
       
-      # PARTIAL TODO - Continue with calculateTree so I can start testing stuff
-      # and handle partially completed games
-      # - Work with getValue to make sure it is returning something usable
+      # PARTIAL TODO 
       # - Work with the nodes to allow calculateTree (or another method) to use
       # already available results
-      # - Return a move to play from the methods
       
     
       
@@ -220,7 +210,6 @@ class MinimaxBot:
     
   #Convert the game from a board to my integer format
   def convertGame(self, currGame):
-    #moveID = "00000000000000000000000000"
     moveID = 0
     cube = currGame.cube
     #Handle the top face
@@ -229,20 +218,16 @@ class MinimaxBot:
       #Check which piece is in this position
       if currPiece == self.piece:
         moveID = moveID + self.player * pow(10, 26 - (i + 1))
-        #moveID = moveID[0:i] + str(self.player) + moveID[(i + 1):]
       elif currPiece == self.oppPiece:
         moveID = moveID + ((self.player % 2) + 1) * pow(10, 26 + i)
-        #moveID = moveID[0:i] + str((self.player % 2) + 1) + moveID[(i + 1):]
     #Handle the bottom face
     for i in range(0,9):
       currPiece = cube["bottom"][i]
       #Check which piece is in this position
       if currPiece == self.piece:
         moveID = moveID + self.player * pow(10, 26 - 9 - (i + 1))
-        #moveID = moveID[0:9+i] + str(self.player) + moveID[(9 + i + 1):]
       elif currPiece == self.oppPiece:
         moveID = moveID + ((self.player % 2) + 1) * pow(10, 26 - 9 - (i + 1))
-        #moveID = moveID[0:9+i] + str((self.player % 2) + 1) + moveID[(9 + i + 1):]
     #Handle the front face
     for i in range(3,6):
       currPiece = cube["front"][i]
@@ -250,10 +235,8 @@ class MinimaxBot:
       #Check which piece is in this position
       if currPiece == self.piece:
         moveID = moveID + self.player * pow(10, 26 - 18 - (j + 1))
-        #moveID = moveID[0:18+j] + str(self.player) + moveID[(18 + j + 1):]
       elif currPiece == self.oppPiece:
         moveID = moveID + ((self.player % 2) + 1) * pow(10, 26 - 18 - (j + 1))
-        #moveID = moveID[0:18+j] + str((self.player % 2) + 1) + moveID[(18 + j + 1):]
     #Handle the back face
     for i in range(3,6):
       currPiece = cube["back"][i]
@@ -261,26 +244,20 @@ class MinimaxBot:
       #Check which piece is in this position
       if currPiece == self.piece:
         moveID = moveID + self.player * pow(10, 26 - 21 - (j + 1))
-        #moveID = moveID[0:21+j] + str(self.player) + moveID[(21 + j + 1):]
       elif currPiece == self.oppPiece:
         moveID = moveID + ((self.player % 2) + 1) * pow(10, 26 - 21 - (j + 1))
-        #moveID = moveID[0:21+j] + str((self.player % 2) + 1) + moveID[(21 + j + 1):]
     #Handle left middle
     currPiece = cube["left"][4]
     if currPiece == self.piece:
       moveID = moveID + self.player * pow(10, 1)
-      #moveID = moveID[0:24] + str(self.player) + moveID[(24 + 1):]
     elif currPiece == self.oppPiece:
       moveID = moveID + ((self.player % 2) + 1) * pow(10, 1)
-      #moveID = moveID[0:24] + str((self.player % 2) + 1) + moveID[(24 + 1):]
     #Handle right middle
     currPiece = cube["right"][4]
     if currPiece == self.piece:
       moveID = moveID + self.player * pow(10, 0)
-      #moveID = moveID[0:25] + str(self.player)
     elif currPiece == self.oppPiece:
       moveID = moveID + ((self.player % 2) + 1) * pow(10, 0)
-      #moveID = moveID[0:25] + str((self.player % 2) + 1)
     return moveID
     
     
