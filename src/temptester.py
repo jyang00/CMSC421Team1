@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Nov  4 15:58:54 2021
+Created on Sun Nov  7 20:42:09 2021
 
 @author: acneu
 """
 
 import cubicTTT as cT
-import newMMbot as mM
 import time as tI
-import minimaxbot as oldBot
+import minimaxbot as oB
 
 
 start_time = tI.perf_counter_ns()
@@ -51,37 +50,20 @@ game.make_move('O', "back", 5)
 #game.make_move('X', "left", 4)
 #game.make_move('O', "right", 4)
 
-
+#### 16 moves in, takes about 9.5 seconds for depth 5
 
 end_time_1 = tI.perf_counter_ns()
 print(f"Play Moves Time: {end_time_1 - start_time}")
 
 print(game.open_unique_moves())
 
-bot = mM.MinimaxBot(game, 'X', 'O', 1)
-bot.calculateTree(game, 5)
-print(f"Keys in table: {len(bot.nodeTable.keys())}")
-print(f"Current moves played: {len(game.x_moves) + len(game.o_moves)}")
-
-## Currently seeing around 15 seconds for depth 5, scaling down to 6.5 seconds
-## around 8 moves in, scaling down to 2.5 seconds around 12 moves in, down to
-## 0.63 seconds around 16 moves in, down to 0.005 seconds around 22 moves in
-
-## 10 seconds for 6 moves in, 13 seconds for 4 moves in
-
-## Basically looks like logarithmic or inverse square
-
-## This is without the heuristic function plugged in, so I expect it to take
-## much longer with it in
-
+bot = oB.MinimaxBot(game, 1, game.first_player(), game.second_player())
+bot.getNextMove(game, 5)
 
 end_time_2= tI.perf_counter_ns()
 print(f"Calculate Tree Time: {end_time_2 - end_time_1}")
 
-print(bot.evalPosition(game))
 
-end_time_3 = tI.perf_counter_ns()
-print(f"Eval Position Time: {end_time_3 - end_time_2}")
 
 
 

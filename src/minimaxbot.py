@@ -12,9 +12,10 @@ Coding strategy:
 class MinimaxBot:
   
   
-  def __init(self, game, piece, oppPiece):
+  def __init__(self, game, player, piece, oppPiece):
     #This doesn't actually get used
     self.game = game
+    self.player = player
     self.piece = piece
     self.oppPiece = oppPiece
     self.MAX_VAL = 999
@@ -22,7 +23,7 @@ class MinimaxBot:
     
   #This works like the maxAlg, but needs a different return
   def getNextMove(self, currGame, depth):
-    moveList = currGame.availableMoves()
+    moveList = currGame.open_unique_moves()
     
     if len(moveList) == 0 or depth < 1:
       #Not sure how to handle this case
@@ -32,7 +33,7 @@ class MinimaxBot:
     beta = self.MAX_VAL
     for move in moveList:
       temp = currGame.copy()
-      temp.nextMove(move, self.piece)
+      temp.make_move(self.piece, move[0], move[1])
       value = self.miniAlg(temp, depth-1, alpha, beta)
       if(value > alpha):
         alpha = value
@@ -45,12 +46,13 @@ class MinimaxBot:
       return self.heuristicAlg(currGame)
     else:
       #Check if there are more moves, if not, return heuristic
-      if(len(currGame.availableMoves()) == 0):
+      moveList = currGame.open_unique_moves()
+      if(len(moveList) == 0):
         return self.heuristicAlg(currGame)
       #Go through every move, copy the game, apply a move, call the min part.
-      for move in currGame.availableMoves():
+      for move in moveList:
         temp = currGame.copy()
-        temp.nextMove(move, self.piece)
+        temp.make_move(self.piece, move[0], move[1])
         value = self.miniAlg(temp, depth-1, alpha, beta)
         if(value > alpha):
           alpha = value
@@ -60,16 +62,17 @@ class MinimaxBot:
   
   def miniAlg(self, currGame, depth, alpha, beta):
     #Check if we are at the depth limit, if so, return heuristic
-    if(depth == 1):
+    if(depth == 0):
       return self.heuristicAlg(currGame)
     else:
       #Check if there are more moves, if not, return heuristic
-      if(len(currGame.availableMoves()) == 0):
+      moveList = currGame.open_unique_moves()
+      if(len(moveList) == 0):
         return self.heuristicAlg(currGame)
       #Go through every move, copy the game, apply a move, call the max part.
-      for move in currGame.availableMoves():
+      for move in moveList:
         temp = currGame.copy()
-        temp.nextMove(move, self.oppPiece)
+        temp.make_move(self.oppPiece, move[0], move[1])
         value = self.maxAlg(temp, depth-1, alpha, beta)
         if(value < beta):
           beta = value
