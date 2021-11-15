@@ -173,7 +173,7 @@ class MinimaxBot:
   # Make the tree structure
   def calculateTree(self, currGame, depth):
     # currMove being -1 means it is the first node and there isn't a move yet
-    self.root = MinimaxBot.Node(self, currGame, -1, self.MIN_VAL, self.MAX_VAL, 1, self.player, depth)
+    self.root = MinimaxBot.Node(self, currGame.copy(), -1, self.MIN_VAL, self.MAX_VAL, 1, self.player, depth)
     
     return self.root.getValue()[1]
     
