@@ -12,16 +12,27 @@ import cubicTTT
 # Alpha = maxes, Beta = mins
 class MinimaxBot:
   
-  def __init__(self, game, piece, oppPiece, player):
+  def __init__(self, piece, oppPiece, player, heurAlg):
     # The game argument doesn't actually get used
-    self.game = game
     self.piece = piece
     self.oppPiece = oppPiece
     self.MAX_VAL = 999
     self.MIN_VAL = -999
     self.nodeTable = {}
     self.player = player
-  
+    self.convTable = {"X" : 1,
+                      "O" : 3,
+                      "-" : 0}
+    self.heurisTable = { 0 : 0,
+                         1 : 1,
+                         2 : 2,
+                         3 : -1,
+                         4 : 0,
+                         5 : 0,
+                         6 : -2,
+                         7 : 0}
+    # heurAlg should either be 1 for the new alg, or anything else for the old alg
+    self.heurAlg = heurAlg
   class Node:
     # This is a node for the minimax tree structure
     
@@ -114,7 +125,10 @@ class MinimaxBot:
       # This means no children, so must be a leaf node
       else:
         currGame = self.makeGame(self.moveID)
-        self.value = self.Outer.heuristicAlg(currGame)
+        if self.Outer.heurAlg == 1:
+          self.value = self.Outer.newheuristicAlg(currGame)
+        else:
+          self.value = self.Outer.oldheuristicAlg(currGame)
         self.leaf = True
       
       if self.isMax:
@@ -217,7 +231,10 @@ class MinimaxBot:
           # This means no children, so must be a leaf node
           else:
             currGame = self.makeGame(self.moveID)
-            self.value = self.Outer.heuristicAlg(currGame)
+            if self.Outer.heurAlg == 1:
+              self.value = self.Outer.newheuristicAlg(currGame)
+            else:
+              self.value = self.Outer.oldheuristicAlg(currGame)
             self.leaf = True
         # If node is not a leaf, apply updateNodes to all of its children
         else:
@@ -233,8 +250,8 @@ class MinimaxBot:
      
       # TODO
       # - Add alpha-beta pruning when evaluating
-      # - Add in heuristic
       # - Make alg stop early if the game is over (don't need to try all moves)
+      # - Combine calculateTree and evalPosition
       
      
 
@@ -255,16 +272,9 @@ class MinimaxBot:
       # Update node values, add new levels, and add the useful data back to 
       #the hashmap
       self.root.updateNodes(depth)
+      
+    return self.root.pos[self.root.getValue()[1]]
     
-  # Gets a move based on a board state
-  # (assumes you have already called calculate tree, I should bundle them 
-  # together later, I mostly have them separate now for testing)
-  def evalPosition(self, currGame):
-    moveID = self.convertGame(currGame)
-    currNode = self.nodeTable[moveID]
-    # getValue returns a (value, move) pair, and pos matches that move in my 
-    # schema to the actual move (side, position)
-    return currNode.pos[currNode.getValue()[1]]
     
   # Convert the game from a board to my integer format
   def convertGame(self, currGame):
@@ -277,7 +287,7 @@ class MinimaxBot:
       if currPiece == self.piece:
         moveID = moveID + self.player * pow(10, 26 - (i + 1))
       elif currPiece == self.oppPiece:
-        moveID = moveID + ((self.player % 2) + 1) * pow(10, 26 + i)
+        moveID = moveID + ((self.player % 2) + 1) * pow(10, 26 - (i + 1))
     # Handle the bottom face
     for i in range(0,9):
       currPiece = cube["bottom"][i]
@@ -318,9 +328,49 @@ class MinimaxBot:
       moveID = moveID + ((self.player % 2) + 1) * pow(10, 0)
     return moveID
     
-    
+  def oldheuristicAlg(self, currGame):
+    total = 0
+    # Calculate # of wins, negate it if game is player2
+    total += 50 * (currGame.x_score - currGame.o_score) * pow(-1, (self.player + 1 % 2))
+    return total
   
-  def heuristicAlg(self, currGame):
-    # Currently left blank, but make sure it returns a massive value on game 
-    # win, a negative massive value on game loss, and everything in between
-    return 0
+  def newheuristicAlg(self, currGame):
+    total = 0
+    
+    
+    # Calculate # of wins
+    total += 50 * (currGame.x_score - currGame.o_score)
+    
+    # Calculate # of 2 in a row and # of 1 in a row
+    for side in currGame.winnable_sides:
+      board = currGame.cube[side]
+      
+      # These equations convert X's to 1's, O's to 3's, and -'s to 0's.
+      # This allows me to add up a row/column/diagonal and use the unique sums
+      # to figure out what to add.
+      # Ex. X - X = 2, which converts to adding 2 (or subtracting if max is O)
+      
+      # Calculate rows
+      total += (self.heurisTable[self.convTable[board[0]] + self.convTable[board[1]] + self.convTable[board[2]]])
+      total += (self.heurisTable[self.convTable[board[3]] + self.convTable[board[4]] + self.convTable[board[5]]])
+      total += (self.heurisTable[self.convTable[board[6]] + self.convTable[board[7]] + self.convTable[board[8]]])
+      # Calculate columns
+      total += (self.heurisTable[self.convTable[board[0]] + self.convTable[board[3]] + self.convTable[board[6]]])
+      total += (self.heurisTable[self.convTable[board[1]] + self.convTable[board[4]] + self.convTable[board[7]]])
+      total += (self.heurisTable[self.convTable[board[2]] + self.convTable[board[5]] + self.convTable[board[8]]])
+      # Calculate diagonals
+      total += (self.heurisTable[self.convTable[board[0]] + self.convTable[board[4]] + self.convTable[board[8]]])
+      total += (self.heurisTable[self.convTable[board[2]] + self.convTable[board[4]] + self.convTable[board[6]]])
+    
+    # Negate it if game is player2, this would mean it did all subtractions backwards
+    total *= pow(-1, (self.player + 1 % 2))
+    return total
+  
+  
+  
+  
+  
+  
+  
+  
+  

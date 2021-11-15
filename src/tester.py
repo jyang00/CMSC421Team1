@@ -8,7 +8,6 @@ Created on Thu Nov  4 15:58:54 2021
 import cubicTTT as cT
 import newMMbot as mM
 import time as tI
-import minimaxbot as oldBot
 
 
 start_time = tI.perf_counter_ns()
@@ -31,17 +30,30 @@ game.make_move('O', "bottom", 6)
 game.make_move('O', "bottom", 7)
 game.make_move('O', "bottom", 8)
 
-#game.make_move('X', "front", 4)
-#game.make_move('X', "top", 4)
-#game.make_move('O', "bottom", 4)
+game.make_move('X', "front", 4)
+game.make_move('X', "top", 4)
+game.make_move('O', "bottom", 4)
 
-#game.make_move('O', "back", 4)
+game.make_move('O', "back", 4)
 game.make_move('X', "front", 3)
 game.make_move('X', "front", 5)
 
 
-game.make_move('O', "back", 3)
-game.make_move('O', "back", 5)
+########## Temp moves
+game.make_move('X', "bottom", 5)
+game.make_move('O', "top", 3)
+
+
+
+##########
+
+
+
+
+
+
+#game.make_move('O', "back", 3)
+#game.make_move('O', "back", 5)
 #game.make_move('X', "top", 5)
 
 #game.make_move('O', "bottom", 3)
@@ -58,8 +70,8 @@ print(f"Play Moves Time: {end_time_1 - start_time}")
 
 print(game.open_unique_moves())
 
-bot = mM.MinimaxBot(game, 'X', 'O', 1)
-bot.calculateTree(game, 5)
+bot = mM.MinimaxBot('X', 'O', 1, 1)
+print(bot.calculateTree(game, 3))
 print(f"Keys in table: {len(bot.nodeTable.keys())}")
 print(f"Current moves played: {len(game.x_moves) + len(game.o_moves)}")
 
@@ -78,10 +90,14 @@ print(f"Current moves played: {len(game.x_moves) + len(game.o_moves)}")
 end_time_2= tI.perf_counter_ns()
 print(f"Calculate Tree Time: {end_time_2 - end_time_1}")
 
-print(bot.evalPosition(game))
+#print(bot.evalPosition(game))
 
-end_time_3 = tI.perf_counter_ns()
-print(f"Eval Position Time: {end_time_3 - end_time_2}")
+#end_time_3 = tI.perf_counter_ns()
+#print(f"Eval Position Time: {end_time_3 - end_time_2}")
+
+game.display_game()
+print(game.x_score)
+print(game.o_score)
 
 
 

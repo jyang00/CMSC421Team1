@@ -33,7 +33,7 @@ class CubicTicTacToe:
         return "X"
 
     def second_player(self):
-        return "Y"
+        return "O"
 
     # (Alternative) randomly pick first player.
     # Call again to get the second player.
