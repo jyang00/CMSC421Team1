@@ -21,7 +21,7 @@ class Random_Bot:
 
     def get_rand_move(self, curr_game):
         total_moves = curr_game.open_unwon_moves()
-        rand_int = r.randrange(0, len(total_moves)-1, 1)
+        rand_int = r.randrange(0, len(total_moves), 1)
         return total_moves[rand_int]
 
     def play_random_move(self, curr_game):
