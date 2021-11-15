@@ -122,7 +122,7 @@ class MinimaxBot:
             # occur at the same level, so I don't need to worry about keeping
             # track of different depth levels.
             self.children.append(self.Outer.nodeTable[newMoveID])
-      # This means no children, so must be a leaf node
+      # This means no children or depth = 1, so must be a leaf node
       else:
         currGame = self.makeGame(self.moveID)
         if self.Outer.heurAlg == 1:
@@ -151,6 +151,10 @@ class MinimaxBot:
             if(currVal > maxVal):
               maxVal = currVal
               bestMove = result[1]
+              
+            # Handle pruning
+            if(maxVal > self.beta):
+              return (maxVal, bestMove)
           return (maxVal, bestMove)
         # If min node, use beta + mins
         else:
@@ -161,6 +165,10 @@ class MinimaxBot:
             if(currVal < minVal):
               minVal = currVal
               bestMove = result[1]
+              
+            # Handle pruning
+            if(minVal < self.alpha):
+              return (minVal, bestMove)
           return (minVal, bestMove)
       
       
@@ -175,7 +183,7 @@ class MinimaxBot:
       return moveList
     
     
-    # Makes a blank game and applies the current moves to that game
+    # Makes a blank cubicTTT game and applies the current moves to that game
     def makeGame(self, moveID):
       game = cubicTTT.CubicTicTacToe()
       
@@ -247,14 +255,6 @@ class MinimaxBot:
         else:
           self.beta = self.getValue()[0]
     
-     
-      # TODO
-      # - Add alpha-beta pruning when evaluating
-      # - Make alg stop early if the game is over (don't need to try all moves)
-      # - Combine calculateTree and evalPosition
-      
-     
-
     
   # Make the tree structure
   def calculateTree(self, currGame, depth):
