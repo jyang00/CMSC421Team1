@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Nov  4 15:58:54 2021
-
-@author: acneu
+Tests newMMbot
 """
 
 import cubicTTT as cT

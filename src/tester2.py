@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Nov 14 20:33:18 2021
-
-@author: acneu
+Tests minimaxbot
 """
 
 import cubicTTT as cT
-import tempMMbot as mM
+import minimaxbot as mM
 import time as tI
 
 
