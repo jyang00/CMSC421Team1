@@ -145,7 +145,7 @@ class CubicTicTacToe:
             "right":    [[("front",2),("top",8)],[("top",5)],[("top",2),("back",0)],[("front",5)],     [],  [("back",3)],[("front",8),("bottom",2)],[("bottom",5)],[("bottom",8),("back",6)]]}
         for i in touching_edges[side][pos]:
             self.move_piece(player,i[0],i[1]) 
-            if pos in self.open_moves[self.sides.index(i[0])]:
+            if i[1] in self.open_moves[self.sides.index(i[0])]:
                 self.open_moves[self.sides.index(i[0])].remove(i[1])
 
     def check_win(self):

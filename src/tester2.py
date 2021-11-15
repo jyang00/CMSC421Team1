@@ -23,30 +23,34 @@ print(f"Play Moves Time: {end_time_1 - start_time}")
 bot = mM.MinimaxBot('X', 'O', 1, 1)
 print(bot.calculateTree(game, 2))
 
-(side, spot) = bot.calculateTree(game, 2)
-game.make_move('X', side, spot)
-
-game.make_move('O', "bottom", 4)
-
-(side, spot) = bot.calculateTree(game, 2)
-game.make_move('X', side, spot)
-
-game.make_move('O', "top", 1)
-
-(side, spot) = bot.calculateTree(game, 2)
-game.make_move('X', side, spot)
-
-game.make_move('O', "top", 3)
-
-(side, spot) = bot.calculateTree(game, 2)
-game.make_move('X', side, spot)
-
-game.make_move('O', "left", 4)
-
-(side, spot) = bot.calculateTree(game, 3)
+(side, spot) = bot.calculateTree(game, 4)
 game.make_move('X', side, spot)
 
 
+# game.make_move('O', "bottom", 4)
+
+# (side, spot) = bot.calculateTree(game, 2)
+# game.make_move('X', side, spot)
+
+# game.make_move('O', "top", 1)
+
+# (side, spot) = bot.calculateTree(game, 2)
+# game.make_move('X', side, spot)
+
+# game.make_move('O', "top", 3)
+
+# (side, spot) = bot.calculateTree(game, 2)
+# game.make_move('X', side, spot)
+
+# game.make_move('O', "left", 4)
+
+# (side, spot) = bot.calculateTree(game, 3)
+# game.make_move('X', side, spot)
+
+# Takes .2 sec for depth = 3 (2 moves)
+# Takes 4.4 sec for depth = 4 (3 moves)
+# Takes 112 sec for depth = 5 (4 moves)
+# These almost exactly show the *20 performance effect of adding another level
 
 print(game.open_unique_moves())
 
