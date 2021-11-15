@@ -270,4 +270,30 @@ class CubicTicTacToe:
     # Not entirely sure how impactful deepcopy 
     # will have on performance with the amount we copy
     def copy(self):
-        return copy.deepcopy(self)
+      return copy.deepcopy(self)
+    
+    
+    
+    def mecopy(self):
+      copyGame = CubicTicTacToe()
+      for i in range(0, max(len(self.x_moves), len(self.o_moves))):
+        if i < len(self.x_moves):
+          move = self.x_moves[i];
+          copyGame.make_move('X', move[0], move[1])
+        if i < len(self.o_moves):
+          move = self.o_moves[i];
+          copyGame.make_move('O', move[0], move[1])
+      
+      return copyGame
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      

@@ -14,17 +14,11 @@ start_time = tI.perf_counter_ns()
 
 game = cT.CubicTicTacToe()
 
-game.make_move('X', "top", 0)
-game.make_move('X', "top", 1)
-game.make_move('X', "top", 2)
-
-
-
 
 end_time_1 = tI.perf_counter_ns()
 print(f"Play Moves Time: {end_time_1 - start_time}")
 
-print(game.open_unique_moves())
+
 
 # This means create a minimax bot with move X, against move O, that is player
 # 1, and uses heuristic alg 1 (the new one, the old one is any other integer)
@@ -34,22 +28,29 @@ print(bot.calculateTree(game, 2))
 (side, spot) = bot.calculateTree(game, 2)
 game.make_move('X', side, spot)
 
-#game.make_move('O', "bottom", 4)
+game.make_move('O', "bottom", 4)
 
-#(side, spot) = bot.calculateTree(game, 2)
-#game.make_move('X', side, spot)
+(side, spot) = bot.calculateTree(game, 2)
+game.make_move('X', side, spot)
 
-#game.make_move('O', "top", 3)
+game.make_move('O', "top", 1)
 
-#(side, spot) = bot.calculateTree(game, 2)
-#game.make_move('X', side, spot)
+(side, spot) = bot.calculateTree(game, 2)
+game.make_move('X', side, spot)
 
-#game.make_move('O', 'left', 2)
+game.make_move('O', "top", 3)
 
-#(side, spot) = bot.calculateTree(game, 2)
-#game.make_move('X', side, spot)
+(side, spot) = bot.calculateTree(game, 2)
+game.make_move('X', side, spot)
 
-#game.make_move('O', 'left', 5)
+game.make_move('O', "left", 4)
+
+(side, spot) = bot.calculateTree(game, 3)
+game.make_move('X', side, spot)
+
+
+
+print(game.open_unique_moves())
 
 
 

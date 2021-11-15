@@ -3,8 +3,6 @@
 Pray this can be efficient
 """
 
-import cubicTTT
-
 # Alpha = maxes, Beta = mins
 class MinimaxBot:
   
@@ -80,7 +78,11 @@ class MinimaxBot:
           # Make a new child with the new move and ID, with opposite isMax 
           # and player, and decremented depth
           tempGame = self.game.copy()
-          child = MinimaxBot.Node(self.Outer, tempGame, move, self.alpha, self.beta, (1 + self.isMax) % 2, (self.player)%2 + 1, depth - 1)
+          if self.player == 1:
+            tempGame.make_move("X", move[0], move[1])
+          else:
+            tempGame.make_move("O", move[0], move[1])
+          child = MinimaxBot.Node(self.Outer, tempGame, move, self.alpha, self.beta, (1 + self.isMax) % 2, (self.player) % 2 + 1, depth - 1)
           self.children.append(child)
           # If duplicate, add a link from this node to that child
       # This means no children or depth = 1, so must be a leaf node
@@ -147,6 +149,10 @@ class MinimaxBot:
             # Make a new child with the new move and ID, with opposite isMax 
             # and player, and decremented depth
             tempGame = self.game.copy()
+            if (self.player % 2) + 1 == 1:
+              tempGame.make_move("X", move[0], move[1])
+            else:
+              tempGame.make_move("O", move[0], move[1])
             child = MinimaxBot.Node(self.Outer, tempGame, move, self.alpha, self.beta, (1 + self.isMax) % 2, (self.player)%2 + 1, depth - 1)
             self.children.append(child)
             # If duplicate, add a link from this node to that child
