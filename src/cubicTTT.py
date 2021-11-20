@@ -107,8 +107,10 @@ class CubicTicTacToe:
     def make_move(self, player, side, pos):
         side = self.side_string(side)
 
-        if not self.can_move(side,pos): #or self.is_game_over:
+        # Changed: a move shouldn't be made if the side has already been won
+        if (side not in self.winnable_sides) or (not self.can_move(side,pos)): #or self.is_game_over:
             return False # Invalid move / Game ended
+        #
 
         if player == "X": 
             self.x_moves.append((side,pos))
@@ -118,10 +120,17 @@ class CubicTicTacToe:
             self.open_moves[self.sides.index(side)].remove(pos)
 
         self.move_piece(player,side,pos)  # Perform Move
-        self.touch_edges(player,side,pos) # Move on edges
-        for s in self.sides:              # Check side wins/ties 
-            self.check_side_win(player,s)
-            self.check_side_tie(s)         
+
+        # Added: just to check the current side
+        self.check_side_win(player,side)    # Check side wins/ties 
+        self.check_side_tie(side)
+        #
+
+        # Changed: if it is the center space, it would not need to call touch edges
+        if pos != 5:
+            self.touch_edges(player,side,pos) # Move on edges
+        #
+       
         self.check_win()                  
         return True
 
@@ -144,7 +153,11 @@ class CubicTicTacToe:
             "left":     [[("top",0),("back",2)],[("top",3)],[("top",6),("front",0)],[("back",5)],      [],  [("front",3)],[("back",8),("bottom",6)],[("bottom",3)],[("front",6),("bottom",0)]],
             "right":    [[("front",2),("top",8)],[("top",5)],[("top",2),("back",0)],[("front",5)],     [],  [("back",3)],[("front",8),("bottom",2)],[("bottom",5)],[("bottom",8),("back",6)]]}
         for i in touching_edges[side][pos]:
-            self.move_piece(player,i[0],i[1]) 
+            self.move_piece(player,i[0],i[1])
+            # Added: check for each side that has changed
+            self.check_side_win(player,i[0])    # Check side wins/ties 
+            self.check_side_tie(i[0])
+            #
             if i[1] in self.open_moves[self.sides.index(i[0])]:
                 self.open_moves[self.sides.index(i[0])].remove(i[1])
 
@@ -153,20 +166,26 @@ class CubicTicTacToe:
             self.is_game_over = True
             self.game_winner = None
 
-        if len(self.winnable_sides) <= 2 and self.x_score >= 4:
-            self.is_game_over = True
-            self.game_winner = "X"
-        
-        if len(self.winnable_sides) <= 2 and self.o_score >= 4:
-            self.is_game_over = True
-            self.game_winner = "O"
-
+        # Changed: placed this as second check
         if not self.winnable_sides:
             self.is_game_over = True
             if self.x_score > self.o_score:
                 self.game_winner = "X"
             else:
                 self.game_winner = "O"
+
+        # since winnable sides is check to not be empty, 
+        # there is no need to check if its length is <=2
+        if self.x_score >= 4:
+            self.is_game_over = True
+            self.game_winner = "X"
+        
+        if self.o_score >= 4:
+            self.is_game_over = True
+            self.game_winner = "O"
+        #
+
+        
 
     def check_side_win(self, player, side):
         side = self.side_string(side)
@@ -198,12 +217,17 @@ class CubicTicTacToe:
 
         if side not in self.winnable_sides:
             return
+
+        # Changed: instead of having a count for '-', 
+        #           just return when '-' is seen
         for i in range(9): # check for tie
-            if self.cube[side][i] != '-':
-               moves += 1
-        if moves == 9:    # update winnable states
-            self.sides_tied.append(side)
-            self.winnable_sides.remove(side) 
+            if self.cube[side][i] == '-':
+               return
+
+        # update winnable states
+        self.sides_tied.append(side)
+        self.winnable_sides.remove(side) 
+        #
 
     # A helper method. Pass in int to get corresponding string side
     # Index 0 = Top Board, Index 1 = Front board, etc.
