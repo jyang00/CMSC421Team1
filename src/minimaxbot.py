@@ -39,7 +39,7 @@ class MinimaxBot:
     # If a leaf, set fields to indicate that and evaluate current position
     def __init__(self, Outer, game, currMove, alpha, beta, isMax, player, depth):
       self.children = []
-      self.currMove = currMove
+      #self.currMove = currMove
       # Outer is a link to the MinimaxBot object so it can use certain fields
       self.Outer = Outer
       self.game = game
@@ -128,9 +128,10 @@ class MinimaxBot:
     # Updates the nodes with the new depth and adds new layer/s onto them
     def updateNodes(self, depth):
       # Check for duplicates
-      if self.game.returnID() not in self.Outer.nodeTable:
+      currID = self.game.returnID()
+      if currID not in self.Outer.nodeTable:
         self.depth = depth
-        
+        self.Outer.nodeTable[currID] = self
         # If node is a leaf, add children (if possible)
         if self.leaf:
           self.leaf = False
@@ -141,7 +142,7 @@ class MinimaxBot:
               # Make a new child with the new move and ID, with opposite isMax 
               # and player, and decremented depth
               tempGame = self.game.copy()
-              if (self.player % 2) + 1 == 1:
+              if self.player  == 1:
                 tempGame.make_move("X", move[0], move[1])
               else:
                 tempGame.make_move("O", move[0], move[1])
