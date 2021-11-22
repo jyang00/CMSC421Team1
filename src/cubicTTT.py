@@ -111,8 +111,11 @@ class CubicTicTacToe:
             return False # Invalid move / Game ended
 
         if player == "X": 
+            # print("X made:" + str((side, pos)))
             self.x_moves.append((side,pos))
         if player == "O": 
+            # print("O made:" + str((side, pos)))
+
             self.o_moves.append((side,pos))  
         if pos in self.open_moves[self.sides.index(side)]: 
             self.open_moves[self.sides.index(side)].remove(pos)
@@ -145,7 +148,7 @@ class CubicTicTacToe:
             "right":    [[("front",2),("top",8)],[("top",5)],[("top",2),("back",0)],[("front",5)],     [],  [("back",3)],[("front",8),("bottom",2)],[("bottom",5)],[("bottom",8),("back",6)]]}
         for i in touching_edges[side][pos]:
             self.move_piece(player,i[0],i[1]) 
-            if pos in self.open_moves[self.sides.index(i[0])]:
+            if i[1] in self.open_moves[self.sides.index(i[0])]:
                 self.open_moves[self.sides.index(i[0])].remove(i[1])
 
     def check_win(self):

@@ -7,6 +7,7 @@ import random
 class TestTTT(unittest.TestCase):
 
     def test_random(self):
+        self.maxDiff = None
         random.seed(10571141)
         game = ct.CubicTicTacToe()
         randomBot = rb.Random_Bot(game, 'X')
@@ -33,30 +34,30 @@ class TestTTT(unittest.TestCase):
             ('right', 3), ('right', 4), ('right', 5), 
             ('right', 6), ('right', 7), ('right', 8)
         ]
-        self.assertEqual(game.open_unwon_moves(), avaliableMoves)
+        self.assertEqual(game.open_board_moves(), avaliableMoves)
 
         # Random generates 16 which corresponds to ('front', 7)
         randomBot.play_random_move(game)
         avaliableMoves.remove(('front', 7))
         avaliableMoves.remove(('bottom', 1))
-        self.assertEqual(game.open_unwon_moves(), avaliableMoves)
-        self.assertEqual(len(game.open_unwon_moves()), 52)
+        self.assertEqual(game.open_board_moves(), avaliableMoves)
+        self.assertEqual(len(game.open_board_moves()), 52)
 
         # Random generates 6 which corresponds to ('top', 6)
         randomBot.play_random_move(game) 
         avaliableMoves.remove(('top', 6))
         avaliableMoves.remove(('front', 0))
         avaliableMoves.remove(('left', 2))
-        self.assertEqual(game.open_unwon_moves(), avaliableMoves)
-        self.assertEqual(len(game.open_unwon_moves()), 49)
+        self.assertEqual(game.open_board_moves(), avaliableMoves)
+        self.assertEqual(len(game.open_board_moves()), 49)
 
         # Random generates 16 which corresponds to ('bottom', 2)
         randomBot.play_random_move(game) 
         avaliableMoves.remove(('bottom', 2))
         avaliableMoves.remove(('front', 8))
         avaliableMoves.remove(('right', 6))
-        self.assertEqual(game.open_unwon_moves(), avaliableMoves)
-        self.assertEqual(len(game.open_unwon_moves()), 46)
+        self.assertEqual(game.open_board_moves(), avaliableMoves)
+        self.assertEqual(len(game.open_board_moves()), 46)
 
     def test_make_move(self):
         random.seed(10571141)
@@ -72,7 +73,6 @@ class TestTTT(unittest.TestCase):
             "left":   board[4],
             "right":  board[5]
         }
-
 
         # Random generates 16 which corresponds to ('front', 7)
         randomBot.play_random_move(game)
