@@ -30,7 +30,7 @@ print(f"Play Moves Time: {end_time_1 - start_time}")
 # 1, and uses heuristic alg 1 (the new one, the old one is any other integer)
 bot = mM.MinimaxBot('X', 'O', 1, 1)
 
-(side, spot) = bot.calculateTree(game, 4)
+(side, spot) = bot.calculateTree(game, 5)
 game.display_boards()
 game.make_move('X', side, spot)
 print(side, spot)
@@ -39,7 +39,7 @@ game.make_move('O', "left", 4)
 
 print(bot.count)
 
-# (side, spot) = bot.calculateTree(game, 4)
+# (side, spot) = bot.calculateTree(game, 3)
 # game.make_move('X', side, spot)
 # print(side, spot)
 
@@ -75,7 +75,7 @@ print(game.open_unique_moves())
 end_time_2= tI.perf_counter_ns()
 print(f"Calculate Tree Time: {end_time_2 - end_time_1}")
 
-game.display_boards()
+game.display_game()
 print(game.x_score)
 print(game.o_score)
 
