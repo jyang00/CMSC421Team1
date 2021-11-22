@@ -20,7 +20,11 @@ class Random_Bot:
     #     return self.game
 
     def get_rand_move(self, curr_game):
+<<<<<<< HEAD
         total_moves = curr_game.open_board_moves()
+=======
+        total_moves = curr_game.open_unwon_moves()
+>>>>>>> 9fdf77cf71ee94052f35b9e9050f9ecd8ba2e241
         rand_int = r.randrange(0, len(total_moves), 1)
         return total_moves[rand_int]
 
