@@ -52,6 +52,7 @@ class MinimaxBot:
       # Leaf is an indicator to the algorithm that this is the end of the tree
       # with leaf, we know when to start calculating heuristics
       self.leaf = False
+      self.value = 0
       
       moveList = game.open_unique_moves()
       if(len(moveList) != 0 and depth > 1):
@@ -64,9 +65,16 @@ class MinimaxBot:
             tempGame.make_move("X", move[0], move[1])
           else:
             tempGame.make_move("O", move[0], move[1])
-          child = MinimaxBot.Node(self.Outer, tempGame, move, self.alpha, self.beta, (1 + self.isMax) % 2, (self.player) % 2 + 1, depth - 1)
-          self.children.append(child)
-          # If duplicate, add a link from this node to that child
+          tempID = tempGame.returnID()
+          
+          # Check for duplicates
+          if tempID not in self.Outer.nodeTable:
+            child = MinimaxBot.Node(self.Outer, tempGame, move, self.alpha, self.beta, (1 + self.isMax) % 2, (self.player) % 2 + 1, depth - 1)
+            self.Outer.nodeTable[tempID] = child  
+            self.children.append(child)
+          else:
+            # If duplicate, add a link from this node to that child
+            self.children.append(self.Outer.nodeTable[tempID])
       # This means no children or depth = 1, so must be a leaf node
       else:
         if self.Outer.heurAlg == 1:
@@ -119,50 +127,66 @@ class MinimaxBot:
     ### THIS METHOD DOES NOT GET USED IF WE DON'T HAVE NODETABLE WORKING
     # Updates the nodes with the new depth and adds new layer/s onto them
     def updateNodes(self, depth):
-      self.depth = depth
-      
-      # If node is a leaf, add children (if possible)
-      if self.leaf:
-        self.leaf = False
-        moveList = self.game.open_unique_moves()
-        if(len(moveList) != 0 and depth > 1):
-          # Try every move
-          for move in moveList:
-            # Make a new child with the new move and ID, with opposite isMax 
-            # and player, and decremented depth
-            tempGame = self.game.copy()
-            if (self.player % 2) + 1 == 1:
-              tempGame.make_move("X", move[0], move[1])
-            else:
-              tempGame.make_move("O", move[0], move[1])
-            child = MinimaxBot.Node(self.Outer, tempGame, move, self.alpha, self.beta, (1 + self.isMax) % 2, (self.player)%2 + 1, depth - 1)
-            self.children.append(child)
-            # If duplicate, add a link from this node to that child
-        # This means no children or depth = 1, so must be a leaf node
-        else:
-          if self.Outer.heurAlg == 1:
-            self.value = self.Outer.newheuristicAlg(self.game)
+      # Check for duplicates
+      if self.game.returnID() not in self.Outer.nodeTable:
+        self.depth = depth
+        
+        # If node is a leaf, add children (if possible)
+        if self.leaf:
+          self.leaf = False
+          moveList = self.game.open_unique_moves()
+          if(len(moveList) != 0 and depth > 1):
+            # Try every move
+            for move in moveList:
+              # Make a new child with the new move and ID, with opposite isMax 
+              # and player, and decremented depth
+              tempGame = self.game.copy()
+              if (self.player % 2) + 1 == 1:
+                tempGame.make_move("X", move[0], move[1])
+              else:
+                tempGame.make_move("O", move[0], move[1])
+              
+              tempID = tempGame.returnID()
+              # Check for duplicates
+              if tempID not in self.Outer.nodeTable:
+                child = MinimaxBot.Node(self.Outer, tempGame, move, self.alpha, self.beta, (1 + self.isMax) % 2, (self.player)%2 + 1, depth - 1)
+                self.Outer.nodeTable[tempID] = child  
+                self.children.append(child)
+              else:
+                # If duplicate, add a link from this node to that child
+                self.children.append(self.Outer.nodeTable[tempID])
+          # This means no children or depth = 1, so must be a leaf node
           else:
-            self.value = self.Outer.oldheuristicAlg(self.game)
-          self.leaf = True
-          
-      # If node is not a leaf, apply updateNodes to all of its children
-      else:
-        for child in self.children:
-          child.updateNodes(depth - 1)
-      
-      # Update alpha/beta values because we have new levels added
-      if self.isMax:
-        self.alpha = self.getValue()[0]
-      else:
-        self.beta = self.getValue()[0]
+            if self.Outer.heurAlg == 1:
+              self.value = self.Outer.newheuristicAlg(self.game)
+            else:
+              self.value = self.Outer.oldheuristicAlg(self.game)
+            self.leaf = True
+            
+        # If node is not a leaf, apply updateNodes to all of its children
+        else:
+          for child in self.children:
+            child.updateNodes(depth - 1)
+        
+        # Update alpha/beta values because we have new levels added
+        if self.isMax:
+          self.alpha = self.getValue()[0]
+        else:
+          self.beta = self.getValue()[0]
     
     
   # Make the tree structure
   def calculateTree(self, currGame, depth):
-    # currMove being -1 means it is the first node and there isn't a move yet
-    self.root = MinimaxBot.Node(self, currGame.copy(), -1, self.MIN_VAL, self.MAX_VAL, 1, self.player, depth)
-    
+    # self.nodeTable = {}
+    # self.root = MinimaxBot.Node(self, currGame.copy(), -1, self.MIN_VAL, self.MAX_VAL, 1, self.player, depth)
+    if len(self.nodeTable.keys()) == 0:
+      # currMove being -1 means it is the first node and there isn't a move yet
+      self.root = MinimaxBot.Node(self, currGame.copy(), -1, self.MIN_VAL, self.MAX_VAL, 1, self.player, depth)
+      self.nodeTable[currGame.returnID()] = self.root
+    else:
+      self.root = self.nodeTable[currGame.returnID()]
+      self.nodeTable = {}
+      self.root.updateNodes(depth)
     return self.root.getValue()[1]
     
     

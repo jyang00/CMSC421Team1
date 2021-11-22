@@ -27,7 +27,23 @@ class CubicTicTacToe:
         self.o_moves = []
         self.is_game_over = False
         self.game_winner = None # None if tied game
-
+        self.ID = 0
+        self.playerNum = {"X" : 1,
+                          "O" : 2,
+                          "-" : 0}
+        self.sideNum = {"top": 0,
+                        "bottom": 1,
+                        "front":2,
+                        "back":3,
+                        "left":4,
+                        "right":5}
+        
+        
+        
+        
+    def returnID(self):
+      return self.ID + self.x_score*10 + self.o_score
+    
     # X is always first player by convention?
     def first_player(self):
         return "X"
@@ -133,6 +149,7 @@ class CubicTicTacToe:
     # (You should be calling make_move instead)
     def move_piece(self, player, side, pos):
         self.cube[side][pos] = player
+        self.ID += self.playerNum[player] * pow(10, self.sideNum[side] * 9 + pos + 2)
         
     # Handles moves crossing over to touched edges  
     def touch_edges(self, player, side, pos):
