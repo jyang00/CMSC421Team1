@@ -36,19 +36,20 @@ game.make_move('X', side, spot)
 print(side, spot)
 
 game.make_move('O', "left", 4)
-game.display_boards()
 
-(side, spot) = bot.calculateTree(game, 4)
-game.make_move('X', side, spot)
-print(side, spot)
+print(bot.count)
 
-game.make_move('O', "top", 2)
+# (side, spot) = bot.calculateTree(game, 4)
+# game.make_move('X', side, spot)
+# print(side, spot)
 
-game.display_boards()
+# game.make_move('O', "top", 2)
 
-(side, spot) = bot.calculateTree(game, 4)
-game.make_move('X', side, spot)
-print(side, spot)
+# game.display_boards()
+
+# (side, spot) = bot.calculateTree(game, 4)
+# game.make_move('X', side, spot)
+# print(side, spot)
 # game.make_move('O', "top", 3)
 
 # (side, spot) = bot.calculateTree(game, 2)

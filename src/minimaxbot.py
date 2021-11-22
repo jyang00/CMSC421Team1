@@ -29,6 +29,7 @@ class MinimaxBot:
                          7 : 0}
     # heurAlg should either be 1 for the new alg, or anything else for the old alg
     self.heurAlg = heurAlg
+    self.count = 0
     
   class Node:
     # This is a node for the minimax tree structure
@@ -75,6 +76,10 @@ class MinimaxBot:
           else:
             # If duplicate, add a link from this node to that child
             self.children.append((move, self.Outer.nodeTable[tempID]))
+          if self.isMax:
+            self.alpha = max(self.alpha, child.beta)
+          else:
+            self.beta = max(self.beta, child.alpha)
       # This means no children or depth = 1, so must be a leaf node
       else:
         if self.Outer.heurAlg == 1:
@@ -83,6 +88,8 @@ class MinimaxBot:
           self.value = self.Outer.oldheuristicAlg(self.game)
         self.leaf = True
       
+      
+      ### THIS PART MIGHT BE REMOVABLE
       if self.isMax:
         self.alpha = self.getValue()[0]
       else:
@@ -107,6 +114,7 @@ class MinimaxBot:
               
             # Handle pruning
             if(maxVal > self.beta):
+              self.Outer.count += 1
               return (maxVal, bestMove)
           return (maxVal, bestMove)
         # If min node, use beta + mins
@@ -121,6 +129,7 @@ class MinimaxBot:
               
             # Handle pruning
             if(minVal < self.alpha):
+              self.Outer.count += 1
               return (minVal, bestMove)
           return (minVal, bestMove)
       
