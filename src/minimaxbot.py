@@ -71,10 +71,10 @@ class MinimaxBot:
           if tempID not in self.Outer.nodeTable:
             child = MinimaxBot.Node(self.Outer, tempGame, move, self.alpha, self.beta, (1 + self.isMax) % 2, (self.player) % 2 + 1, depth - 1)
             self.Outer.nodeTable[tempID] = child  
-            self.children.append(child)
+            self.children.append((move, child))
           else:
             # If duplicate, add a link from this node to that child
-            self.children.append(self.Outer.nodeTable[tempID])
+            self.children.append((move, self.Outer.nodeTable[tempID]))
       # This means no children or depth = 1, so must be a leaf node
       else:
         if self.Outer.heurAlg == 1:
@@ -92,13 +92,14 @@ class MinimaxBot:
     # Returns the best value along with the move used to get there
     def getValue(self):    
       if (self.leaf):
-        return (self.value, self.currMove)
+        #return (self.value, self.currMove)
+        return (self.value, ("-", 0))
       else:
         # If max node, use alpha + maxes
         if self.isMax:
           maxVal = self.Outer.MIN_VAL
-          for child in self.children:
-            result = (child.beta, child.currMove)
+          for (move, child) in self.children:
+            result = (child.beta, move)
             currVal = result[0]
             if(currVal > maxVal):
               maxVal = currVal
@@ -111,8 +112,8 @@ class MinimaxBot:
         # If min node, use beta + mins
         else:
           minVal = self.Outer.MAX_VAL
-          for child in self.children:
-            result = (child.alpha, child.currMove)
+          for (move, child) in self.children:
+            result = (child.alpha, move)
             currVal = result[0]
             if(currVal < minVal):
               minVal = currVal
@@ -130,6 +131,8 @@ class MinimaxBot:
       # Check for duplicates
       currID = self.game.returnID()
       if currID not in self.Outer.nodeTable:
+        self.alpha = self.Outer.MIN_VAL
+        self.beta = self.Outer.MAX_VAL
         self.depth = depth
         self.Outer.nodeTable[currID] = self
         # If node is a leaf, add children (if possible)
@@ -152,10 +155,10 @@ class MinimaxBot:
               if tempID not in self.Outer.nodeTable:
                 child = MinimaxBot.Node(self.Outer, tempGame, move, self.alpha, self.beta, (1 + self.isMax) % 2, (self.player)%2 + 1, depth - 1)
                 self.Outer.nodeTable[tempID] = child  
-                self.children.append(child)
+                self.children.append((move, child))
               else:
                 # If duplicate, add a link from this node to that child
-                self.children.append(self.Outer.nodeTable[tempID])
+                self.children.append((move, self.Outer.nodeTable[tempID]))
           # This means no children or depth = 1, so must be a leaf node
           else:
             if self.Outer.heurAlg == 1:
@@ -166,7 +169,7 @@ class MinimaxBot:
             
         # If node is not a leaf, apply updateNodes to all of its children
         else:
-          for child in self.children:
+          for (move, child) in self.children:
             child.updateNodes(depth - 1)
         
         # Update alpha/beta values because we have new levels added
