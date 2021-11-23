@@ -27,11 +27,11 @@ def exper1():
     rbSecondWins = 0
     mmbFirstWins = 0
     mmbSecondWins = 0
-    game = ct.CubicTicTacToe()
 
     # N trials with Random Bot going first, next N trials with 
     # minimax going first
     for i in range(0,trials):
+        game = ct.CubicTicTacToe()
         randomBot = rb.Random_Bot(game, 'X')
         mmb = minimaxbot.MinimaxBot('O', 'X', 2, 1)
         moves = 1
@@ -49,6 +49,7 @@ def exper1():
             mmbSecondWins+=1
 
     for i in range(0,trials):
+        game = ct.CubicTicTacToe()
         mmb = minimaxbot.MinimaxBot('X', 'O', 1, 1)
         randomBot = rb.Random_Bot(game, 'O')
         moves = 1
@@ -80,17 +81,21 @@ def exper2():
     mmbOldAvgTimeSecond = 0
     totalMovesNewFirst = 0
     totalMovesOldFirst = 0
-    game = ct.CubicTicTacToe()
 
+    # First test, new Heuristic is going first
     for i in range(0, trials):
+        game = ct.CubicTicTacToe()
         mmbNew = minimaxbot.MinimaxBot('X', 'O', 1, 1)
         mmbOld = minimaxbot.MinimaxBot('O', 'X', 2, 0)
         moves = 1
         while game.is_game_over == False:
+            # get start times and end times before and after the call for mmb to pick next move
             t0 = time.time()
             mmbNewMove = mmbNew.calculateTree(game, depth)
             game.make_move(mmbNew.piece, mmbNewMove[0], mmbNewMove[1])
             t1 = time.time()
+            # Not really an average, but rather a sum of all the time it takes for this bot to 
+            # run in total
             mmbNewAvgTimeFirst+= (t1-t0)
             if (game.is_game_over):
                 break
@@ -105,9 +110,12 @@ def exper2():
             mmbNewFirstWins+=1
         else:
             mmbOldSecondWins+=1
+        # Gets total number of how many moves are being run in total across all trials
         totalMovesNewFirst+=moves
 
+    # Second test, old Heuristic is going first
     for i in range(0, trials):
+        game = ct.CubicTicTacToe()
         mmbOld = minimaxbot.MinimaxBot('X', 'O', 1, 0)
         mmbNew = minimaxbot.MinimaxBot('O', 'X', 2, 1)
         moves = 1
@@ -131,15 +139,55 @@ def exper2():
         else:
             mmbNewSecondWins +=1
         totalMovesOldFirst += moves
+
+    # calculating the true average of the time it takes to run everything. Calculated as the sum of all times
+    # divided by the total number of moves
     oldFirstAvgTime = mmbOldAvgTimeFirst/totalMovesOldFirst
     oldSecondAvgTime = mmbOldAvgTimeSecond/totalMovesNewFirst
     newFirstAvgTime = mmbNewAvgTimeFirst/totalMovesNewFirst
     newSecondAvgTime = mmbNewAvgTimeSecond/totalMovesOldFirst
+    # return all the information into a single row/table that will be written to the final csv file specified.
     return [depth, mmbOldFirstWins, oldFirstAvgTime, mmbOldSecondWins, oldSecondAvgTime, mmbNewFirstWins, 
                     newFirstAvgTime, mmbNewSecondWins, newSecondAvgTime]
 
 def exper3():
-    print("running experiment 3")
+    print("Minimax bot verses Random bot again, how long does it take at depth "+ str(depth)+
+                    "\ntake some y moves into the game. Goal: Check depth over a range of values")
+    to_csv = []
+    # to_csv has members that are the rows of the final csv file, they follow the following order to 
+    # maintain correctness in the final csv file 
+    # ["depth" "move number", "Going First", "Minimax Bot time to Make Move", "Winner"]
+    
+    # for the Winner field, if the winner is not decided yet, the value is 0. 
+    # If Random Bot wins, the value is -1
+    # If Minimax Bot wins, the value is 1
+
+    # For my own sanity, the "going first" label is 0 if Minimax is going first 
+    # and 1 if Random Bot is going first
+    # Here, Minimax Bot is going first
+
+    for i in range(0,trials):
+        game = ct.CubicTicTacToe()
+        first = 0
+        winner = 0
+        moves = 1
+        
+        while game.is_game_over == False:
+            moveTime = 0
+            to_csv.append([depth, moves, first, moveTime, winner])
+            moves +=1
+
+        winner = 0
+
+    # Random bot is going first
+    for i in range(0,trials):
+        first = 1
+        winner = 0
+
+
+        winner = 0
+
+    return to_csv
 
 if __name__ == "__main__":
     if experNum == "1":
@@ -178,4 +226,10 @@ if __name__ == "__main__":
         # at how long it takes to make a move with depth x (specified 
         # in the commandline) on move y.
         print("got in commandline: experiment type "+experNum+ ", depth "+ str(depth)+", with trials "+str(trials))
-        exper3()
+        data = exper3()
+        fields = ["depth" "move number", "Going First", "Minimax Bot time to Make Move", "Winner"]
+        with open(filename, 'w') as csvfile:
+            csvwriter = csv.writer(csvfile)
+            csvwriter.writerow(fields)
+            csvwriter.writerows(data)
+        csvfile.close()
