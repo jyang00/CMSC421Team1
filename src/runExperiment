@@ -204,7 +204,6 @@ def exper3():
         mmb = minimaxbot.MinimaxBot('X', 'O', 1, 1)
         randomBot = rb.Random_Bot(game, 'O')
         moves = 1
-        fin = False
         while game.is_game_over == False:
             t0 = time.time()
             mmbMove = mmb.calculateTree(game, depth)
@@ -213,16 +212,13 @@ def exper3():
             moveTime = t1-t0
             if (game.is_game_over):
                 to_csv.append([depth, moves, first, moveTime, game.game_winner])
-                fin == True
+                moveTime = 0
                 break
             else:
                 to_csv.append([depth, moves, first, moveTime, game.game_winner])
             randomBot.play_random_move(game)
             moves+=1
             moveTime = 0
-        winner = game.game_winner
-        if fin == False:
-            to_csv.append([depth, moves, first, moveTime, game.game_winner])
 
     # Random bot is going first
     for i in range(0,trials):
@@ -237,7 +233,6 @@ def exper3():
             randomBot.play_random_move(game)
             if (game.is_game_over):
                 to_csv.append([depth, moves, first, moveTime, game.game_winner])
-                fin = True
                 break
             t0 = time.time()
             mmbMove = mmb.calculateTree(game, depth)
@@ -247,10 +242,6 @@ def exper3():
             to_csv.append([depth, moves, first, moveTime, game.game_winner])
             moves+=1
             moveTime = 0
-        winner = game.game_winner
-        if fin == False:
-            to_csv.append([depth, moves, first, moveTime, game.game_winner])
-
 
     return to_csv
 
