@@ -32,7 +32,6 @@ class MinimaxBot:
     # This is a node for the minimax tree structure
     
     
-    
     # Setup fields and create a bunch of child nodes
     # If a leaf, set fields to indicate that and evaluate current position
     def __init__(self, Outer, game, alpha, beta, isMax, player, depth):
@@ -123,7 +122,6 @@ class MinimaxBot:
     self.nodeTable = {}
     self.root = MinimaxBot.Node(self, currGame.copy(), self.MIN_VAL, self.MAX_VAL, 1, self.player, depth)
     return self.root.getValue()[1]
-    #return self.root.alpha
     
     
   def oldheuristicAlg(self, currGame):

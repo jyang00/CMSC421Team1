@@ -1,33 +1,82 @@
 import minimaxbot
-import tictactoe
+import cubicTTT as ct
+import randomBot as rb
+import random
 
-NUM_ITERATIONS = 10
+NUM_ITERATIONS = 25
 
-tictactoe = tictactoe.tictactoe()
-minimaxbot = minimaxbot.minimaxbot()
+def run_ttt():
 
-firstPlayerWins = 0
-secondPlayerWins = 0
+    randomBotWins = 0
+    mmbWins = 0
 
-counter = 0
-while counter < NUM_ITERATIONS:
+    counter = 0
+    while counter < NUM_ITERATIONS:
 
-    firstPlayerFacesWon = 0
-    secondPlayerFacesWon = 0
+        game = ct.CubicTicTacToe()
 
-    # While there are avaliable moves in the game: 
-    firstPlayerMove = minimaxbot.getNextMove(tictactoe.gameBoard)
-    secondPlayerMove = minimaxbot.getNextMove(tictactoe.gameBoard)
-    tictactoe.updateGame()
-    # Update faces won
+        order = random.randint(0, 1)
 
+        if order == 1:
+            # print("RB goes first")
+            randomBot = rb.Random_Bot(game, 'X')
+            mmb = minimaxbot.MinimaxBot('O', 'X', 2, 1)
+        else:
+            # print("MMB first")
+            mmb = minimaxbot.MinimaxBot('X', 'O', 1, 1)
+            randomBot = rb.Random_Bot(game, 'O')
+        
+
+        moveNum = 1
+        while game.is_game_over == False:
+            
+            print("------------------------------------------------------")
+            print("-----------------------Turn " + str(moveNum) + "-------------------------")
+            print("------------------------------------------------------")
     
-    if firstPlayerFacesWon > secondPlayerFacesWon:
-        firstPlayerWins += 1
-    elif firstPlayerFacesWon < secondPlayerFacesWon: 
-        secondPlayerWins += 1
+            if (order == 1):
+                randomBot.play_random_move(game)
 
-    counter += 1
+                if (game.is_game_over):
+                    game.display_boards()
+                    break
 
-print("First player won {} times while second player won {} times.".format(firstPlayerWins, secondPlayerWins))
+                mmbMove = mmb.calculateTree(game, 4)
+                game.make_move(mmb.piece, mmbMove[0], mmbMove[1])
 
+            else:
+                mmbMove = mmb.calculateTree(game, 4)
+                game.make_move(mmb.piece, mmbMove[0], mmbMove[1])
+
+                if (game.is_game_over):
+                    game.display_boards()
+                    break
+
+                randomBot.play_random_move(game)
+
+            game.display_boards() 
+
+            moveNum += 1
+
+        winner = game.game_winner
+        if winner == 'X' and order == 1:
+            randomBotWins += 1
+            print("Random Bot won with X")
+        elif winner == 'O' and order == 1:
+            mmbWins += 1
+            print("MMB won with X")
+        elif winner == 'X' and order == 0:
+            mmbWins += 1
+            print("MMB won with O")
+        elif winner == 'O' and order == 0:
+            randomBotWins += 1
+            print("Random Bot won with O")
+
+        print(game.x_moves)
+        print(game.o_moves)
+        counter += 1
+
+    print("RandomBot won {} times while MinimaxBot won {} times.".format(randomBotWins, mmbWins))
+
+if __name__ == '__main__':
+    run_ttt()

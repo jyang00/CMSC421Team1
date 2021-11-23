@@ -27,22 +27,10 @@ class CubicTicTacToe:
         self.o_moves = []
         self.is_game_over = False
         self.game_winner = None # None if tied game
-        self.ID = 0
-        self.playerNum = {"X" : 1,
-                          "O" : 2,
-                          "-" : 0}
-        self.sideNum = {"top": 0,
-                        "bottom": 1,
-                        "front":2,
-                        "back":3,
-                        "left":4,
-                        "right":5}
         
         
         
         
-    def returnID(self):
-      return self.ID + self.x_score*10 + self.o_score
     
     # X is always first player by convention?
     def first_player(self):
@@ -134,10 +122,14 @@ class CubicTicTacToe:
             self.open_moves[self.sides.index(side)].remove(pos)
 
         self.move_piece(player,side,pos)  # Perform Move
+        
+        # Added: just to check the current side
+        self.check_side_win(player,side)    # Check side wins/ties 
+        self.check_side_tie(side)
+        #
+
         self.touch_edges(player,side,pos) # Move on edges
-        for s in self.sides:              # Check side wins/ties 
-            self.check_side_win(player,s)
-            self.check_side_tie(s)         
+        
         self.check_win()                  
         return True
 
@@ -149,7 +141,6 @@ class CubicTicTacToe:
     # (You should be calling make_move instead)
     def move_piece(self, player, side, pos):
         self.cube[side][pos] = player
-        self.ID += self.playerNum[player] * pow(10, self.sideNum[side] * 9 + pos + 2)
         
     # Handles moves crossing over to touched edges  
     def touch_edges(self, player, side, pos):
@@ -162,29 +153,36 @@ class CubicTicTacToe:
             "right":    [[("front",2),("top",8)],[("top",5)],[("top",2),("back",0)],[("front",5)],     [],  [("back",3)],[("front",8),("bottom",2)],[("bottom",5)],[("bottom",8),("back",6)]]}
         for i in touching_edges[side][pos]:
             self.move_piece(player,i[0],i[1]) 
+            # Added: check for each side that has changed
+            self.check_side_win(player,i[0])   # Check side wins/ties 
+            self.check_side_tie(i[0])
+            #
             if i[1] in self.open_moves[self.sides.index(i[0])]:
                 self.open_moves[self.sides.index(i[0])].remove(i[1])
-
+      
     def check_win(self):
         if len(self.sides_tied) == 6:
             self.is_game_over = True
             self.game_winner = None
+            return
 
-        if len(self.winnable_sides) <= 2 and self.x_score >= 4:
+        # if not self.winnable_sides:
+        #     self.is_game_over = True
+        #     if self.x_score > self.o_score:
+        #         self.game_winner = "X"
+        #     else:
+        #         self.game_winner = "O"
+                
+        if self.x_score >= 4:
             self.is_game_over = True
             self.game_winner = "X"
+            return
         
-        if len(self.winnable_sides) <= 2 and self.o_score >= 4:
+        if self.o_score >= 4:
             self.is_game_over = True
             self.game_winner = "O"
-
-        if not self.winnable_sides:
-            self.is_game_over = True
-            if self.x_score > self.o_score:
-                self.game_winner = "X"
-            else:
-                self.game_winner = "O"
-
+            return
+            
     def check_side_win(self, player, side):
         side = self.side_string(side)
         s = self.cube[side]
@@ -211,16 +209,19 @@ class CubicTicTacToe:
     # A tie is a side that is full with no winner
     def check_side_tie(self, side):
         side = self.side_string(side)
-        moves = 0
-
+        
         if side not in self.winnable_sides:
             return
+        # Changed: instead of having a count for '-', 
+        #           just return when '-' is seen
         for i in range(9): # check for tie
-            if self.cube[side][i] != '-':
-               moves += 1
-        if moves == 9:    # update winnable states
-            self.sides_tied.append(side)
-            self.winnable_sides.remove(side) 
+            if self.cube[side][i] == '-':
+               return
+             
+        # update winnable states
+        self.sides_tied.append(side)
+        self.winnable_sides.remove(side) 
+        #
 
     # A helper method. Pass in int to get corresponding string side
     # Index 0 = Top Board, Index 1 = Front board, etc.
@@ -288,20 +289,7 @@ class CubicTicTacToe:
     # will have on performance with the amount we copy
     def copy(self):
       return copy.deepcopy(self)
-    
-    
-    
-    def mecopy(self):
-      copyGame = CubicTicTacToe()
-      for i in range(0, max(len(self.x_moves), len(self.o_moves))):
-        if i < len(self.x_moves):
-          move = self.x_moves[i];
-          copyGame.make_move('X', move[0], move[1])
-        if i < len(self.o_moves):
-          move = self.o_moves[i];
-          copyGame.make_move('O', move[0], move[1])
-      
-      return copyGame
+  
       
       
       
