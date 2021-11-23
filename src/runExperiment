@@ -4,7 +4,6 @@ import sys
 import minimaxbot
 import cubicTTT as ct
 import randomBot as rb
-import random
 import csv
 import time
 
