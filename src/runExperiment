@@ -6,6 +6,7 @@ import cubicTTT as ct
 import randomBot as rb
 import random
 import csv
+import time
 
 # A basic shell python script to run experiments and 
 # collect data into a standardized csv file to run statistical
@@ -69,6 +70,73 @@ def exper1():
 def exper2():
     print("Testing Minimax Bots our new heuristic verses the old heuristic.\n "+
                     "Timing between decisions is recorded as well and taken as an average")
+    mmbNewFirstWins = 0
+    mmbNewSecondWins = 0
+    mmbOldFirstWins = 0
+    mmbOldSecondWins = 0
+    mmbNewAvgTimeFirst = 0
+    mmbNewAvgTimeSecond = 0
+    mmbOldAvgTimeFirst = 0
+    mmbOldAvgTimeSecond = 0
+    totalMovesNewFirst = 0
+    totalMovesOldFirst = 0
+    game = ct.CubicTicTacToe()
+
+    for i in range(0, trials):
+        mmbNew = minimaxbot.MinimaxBot('X', 'O', 1, 1)
+        mmbOld = minimaxbot.MinimaxBot('O', 'X', 2, 0)
+        moves = 1
+        while game.is_game_over == False:
+            t0 = time.time()
+            mmbNewMove = mmbNew.calculateTree(game, depth)
+            game.make_move(mmbNew.piece, mmbNewMove[0], mmbNewMove[1])
+            t1 = time.time()
+            mmbNewAvgTimeFirst+= (t1-t0)
+            if (game.is_game_over):
+                break
+            t0 = time.time()
+            mmbOldMove = mmbOld.calculateTree(game, depth)
+            game.make_move(mmbOld.piece, mmbOldMove[0], mmbOldMove[1])
+            t1 = time.time()
+            mmbOldAvgTimeSecond += (t1-t0)
+            moves +=1
+        winner = game.game_winner
+        if winner == 'X':
+            mmbNewFirstWins+=1
+        else:
+            mmbOldSecondWins+=1
+        totalMovesNewFirst+=moves
+
+    for i in range(0, trials):
+        mmbOld = minimaxbot.MinimaxBot('X', 'O', 1, 0)
+        mmbNew = minimaxbot.MinimaxBot('O', 'X', 2, 1)
+        moves = 1
+        while game.is_game_over == False:
+            t0 = time.time()
+            mmbOldMove = mmbOld.calculateTree(game, depth)
+            game.make_move(mmbOld.piece, mmbOldMove[0], mmbOldMove[1])
+            t1 = time.time()
+            mmbOldAvgTimeFirst += (t1-t0)
+            if (game.is_game_over):
+                break
+            t0 = time.time()
+            mmbNewMove = mmbNew.calculateTree(game, depth)
+            game.make_move(mmbNew.piece, mmbNewMove[0], mmbNewMove[1])
+            t1 = time.time()
+            mmbNewAvgTimeSecond += (t1-t0)
+            moves+=1
+        winner = game.game_winner
+        if winner == 'X':
+            mmbOldFirstWins +=1
+        else:
+            mmbNewSecondWins +=1
+        totalMovesOldFirst += moves
+    oldFirstAvgTime = mmbOldAvgTimeFirst/totalMovesOldFirst
+    oldSecondAvgTime = mmbOldAvgTimeSecond/totalMovesNewFirst
+    newFirstAvgTime = mmbNewAvgTimeFirst/totalMovesNewFirst
+    newSecondAvgTime = mmbNewAvgTimeSecond/totalMovesOldFirst
+    return [depth, mmbOldFirstWins, oldFirstAvgTime, mmbOldSecondWins, oldSecondAvgTime, mmbNewFirstWins, 
+                    newFirstAvgTime, mmbNewSecondWins, newSecondAvgTime]
 
 def exper3():
     print("running experiment 3")
@@ -94,8 +162,16 @@ if __name__ == "__main__":
         # How many wins at depth specified on commandline and how 
         # long does it take to learn and beat it?
         print("got in commandline: experiment type "+experNum+ ", depth "+ str(depth)+", with trials "+str(trials))
-        for i in range(0,trials):
-            exper2()
+        data = exper2()
+        fields = ['depth', "Minimax Old Heuristic (first)", "Old Heuristic Average Time per Move (first)", 
+                        "Minimax Old Heuristic (second)",  "Old Heuristic Average Time per Move (second)", 
+                        "Minimax New Heuristic (first)", "New Heuristic Average Time per Move (first)", 
+                        "Minimax New Heuristic (second)",  "New Heuristic Average Time per Move (second)",]
+        with open(filename, 'w') as csvfile:
+            csvwriter = csv.writer(csvfile)
+            csvwriter.writerow(fields)
+            csvwriter.writerow(data)
+        csvfile.close()
 
     elif experNum == "3":
         # The case of minimax verses random bot where we're looking
