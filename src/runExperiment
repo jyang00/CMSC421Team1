@@ -1,0 +1,105 @@
+#! /usr/bin/python3
+
+import sys
+import minimaxbot
+import cubicTTT as ct
+import randomBot as rb
+import random
+import csv
+
+# A basic shell python script to run experiments and 
+# collect data into a standardized csv file to run statistical
+# analysis on later in R (will be writing this script after I
+# finish with this one)
+
+# HOW TO RUN: run as follows:
+# ./runExperiment [number] [N] [depth] [filename]
+
+experNum = sys.argv[1]
+trials = int(sys.argv[2])
+depth = int(sys.argv[3])
+filename = sys.argv[4]+".csv"
+
+def exper1():
+    print("Testing quickly who wins most, Random Bot verses Minimax Bot, and if play order matters")
+    rbFirstWins = 0
+    rbSecondWins = 0
+    mmbFirstWins = 0
+    mmbSecondWins = 0
+    game = ct.CubicTicTacToe()
+
+    # N trials with Random Bot going first, next N trials with 
+    # minimax going first
+    for i in range(0,trials):
+        randomBot = rb.Random_Bot(game, 'X')
+        mmb = minimaxbot.MinimaxBot('O', 'X', 2, 1)
+        moves = 1
+        while game.is_game_over == False:
+            randomBot.play_random_move(game)
+            if (game.is_game_over):
+                break
+            mmbMove = mmb.calculateTree(game, depth)
+            game.make_move(mmb.piece, mmbMove[0], mmbMove[1])
+            moves+=1
+        winner = game.game_winner
+        if winner == 'X':
+            rbFirstWins+=1
+        else:
+            mmbSecondWins+=1
+
+    for i in range(0,trials):
+        mmb = minimaxbot.MinimaxBot('X', 'O', 1, 1)
+        randomBot = rb.Random_Bot(game, 'O')
+        moves = 1
+        while game.is_game_over == False:
+            mmbMove = mmb.calculateTree(game, depth)
+            game.make_move(mmb.piece, mmbMove[0], mmbMove[1])
+            if (game.is_game_over):
+                break
+            randomBot.play_random_move(game)
+            moves+=1
+        winner = game.game_winner
+        if winner == 'X':
+            mmbFirstWins+=1
+        else:
+            rbSecondWins+=1
+
+    return [depth, rbFirstWins, rbSecondWins, mmbFirstWins, mmbSecondWins]
+
+def exper2():
+    print("Testing Minimax Bots our new heuristic verses the old heuristic.\n "+
+                    "Timing between decisions is recorded as well and taken as an average")
+
+def exper3():
+    print("running experiment 3")
+
+if __name__ == "__main__":
+    if experNum == "1":
+        # the case of our Minimax Bot vs. the Random Bot
+        # we want to see how many wins MiniMax can achieve verses
+        # a random stupid player at depth specified in commandline
+        print("got in commandline: experiment type "+experNum+ ", depth "+ str(depth)+", with trials "+str(trials))
+        data = exper1()
+        fields = ['depth', 'Num of RB wins (first)', 'Num of RB wins (second)', 
+                        'Num of Minimax Bot (first)', 'Num of Minimax Bot (second)']
+        with open(filename, 'w') as csvfile:
+            csvwriter = csv.writer(csvfile)
+            csvwriter.writerow(fields)
+            csvwriter.writerow(data)
+        csvfile.close()
+        
+
+    elif experNum == "2":
+        # The case of our Minimax bot verses another minimax bot,
+        # How many wins at depth specified on commandline and how 
+        # long does it take to learn and beat it?
+        print("got in commandline: experiment type "+experNum+ ", depth "+ str(depth)+", with trials "+str(trials))
+        for i in range(0,trials):
+            exper2()
+
+    elif experNum == "3":
+        # The case of minimax verses random bot where we're looking
+        # at how long it takes to make a move with depth x (specified 
+        # in the commandline) on move y.
+        print("got in commandline: experiment type "+experNum+ ", depth "+ str(depth)+", with trials "+str(trials))
+        exper3()
