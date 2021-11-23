@@ -30,7 +30,6 @@ import time
 # makes it a .csv already, so the extension is not needed to specify anything. It adds the .csv 
 # extention to make it more compatible and readible later without converting the file.
 
-# THIS FUNCTIONALITY IS NOT CURRENTLY WORKING, PLEASE DO NOT USE THIS!
 # [concat file?] 0 or something else to specify if the tester wants the file to concat to the end 
 # of an already existing file. If the user wants to concat to the end of an already existing file 
 # have this value be 0. Otherwise if you're creating a new file have this as something OTHER THAN 
@@ -42,12 +41,6 @@ experNum = sys.argv[1]
 trials = int(sys.argv[2])
 depth = int(sys.argv[3])
 filename = sys.argv[4]+".csv"
-concat = False
-
-#if sys.argv[5] == 0:
-#    concat == True
-#else:
-#    concat == False
 
 
 def exper1():
@@ -246,6 +239,11 @@ def exper3():
     return to_csv
 
 if __name__ == "__main__":
+    if sys.argv[5] == '0':
+        openType = 'a'
+    else:
+        openType = 'w'
+
     if experNum == "1":
         # the case of our Minimax Bot vs. the Random Bot
         # we want to see how many wins MiniMax can achieve verses
@@ -255,9 +253,9 @@ if __name__ == "__main__":
         data = exper1()
         fields = ['depth', 'Num of RB wins (first)', 'Num of RB wins (second)', 
                         'Num of Minimax Bot (first)', 'Num of Minimax Bot (second)']
-        with open(filename, 'w') as csvfile:
+        with open(filename, openType) as csvfile:
             csvwriter = csv.writer(csvfile)
-            if concat == False:
+            if sys.argv[5] != '0':
                 csvwriter.writerow(fields)
             csvwriter.writerow(data)
         csvfile.close()
@@ -278,9 +276,9 @@ if __name__ == "__main__":
                         "New Heuristic Average Time per Move (first)", 
                         "Minimax New Heuristic (second)",  
                         "New Heuristic Average Time per Move (second)",]
-        with open(filename, 'w') as csvfile:
+        with open(filename, openType) as csvfile:
             csvwriter = csv.writer(csvfile)
-            if concat == False:
+            if sys.argv[5] != '0':
                 csvwriter.writerow(fields)
             csvwriter.writerow(data)
         csvfile.close()
@@ -293,9 +291,9 @@ if __name__ == "__main__":
                         +"trials "+str(trials))
         data = exper3()
         fields = ["depth" "move number", "Going First", "Minimax Bot time to Make Move", "Winner"]
-        with open(filename, 'w') as csvfile:
+        with open(filename, openType) as csvfile:
             csvwriter = csv.writer(csvfile)
-            if concat == False:
+            if sys.argv[5] != '0':
                 csvwriter.writerow(fields)
             csvwriter.writerows(data)
         csvfile.close()
