@@ -1,7 +1,7 @@
 import numpy as np
 import random
 import copy
-
+import time as tI
 # Let me know if any changes are needed
 
 class CubicTicTacToe:
@@ -27,6 +27,8 @@ class CubicTicTacToe:
         self.o_moves = []
         self.is_game_over = False
         self.game_winner = None # None if tied game
+        self.time1 = 0
+        self.time2 = 0
         
         
         
@@ -113,24 +115,24 @@ class CubicTicTacToe:
 
         if not self.can_move(side,pos): #or self.is_game_over:
             return False # Invalid move / Game ended
-
+        
         if player == "X": 
             self.x_moves.append((side,pos))
         if player == "O": 
             self.o_moves.append((side,pos))  
         if pos in self.open_moves[self.sides.index(side)]: 
             self.open_moves[self.sides.index(side)].remove(pos)
-
-        self.move_piece(player,side,pos)  # Perform Move
         
+        self.move_piece(player,side,pos)  # Perform Move
+       
         # Added: just to check the current side
         self.check_side_win(player,side)    # Check side wins/ties 
         self.check_side_tie(side)
         #
-
-        self.touch_edges(player,side,pos) # Move on edges
         
-        self.check_win()                  
+        self.touch_edges(player,side,pos) # Move on edges
+        self.check_win()       
+        
         return True
 
     # Checks if position is open
