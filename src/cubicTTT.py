@@ -2,45 +2,40 @@ import numpy as np
 import random
 import copy
 
-# Let me know if any changes are needed
-
 class CubicTicTacToe:
     def __init__(self):
         self.board = [['-']*9 for i in range(6)] # Game board is a 2D list containing all sides.
-        self.cube =  {"top":    self.board[0],   # Each side is a 1D list with 9 positions
+        self.cube  = {"top":    self.board[0],   # Each side is a 1D list with 9 positions
                       "front":  self.board[1], 
                       "bottom": self.board[2],
                       "back":   self.board[3],
                       "left":   self.board[4],
                       "right":  self.board[5]}
-        self.open_moves = [[i for i in range(9)] for i in range(6)]          # Elements get removed on moves made (avoids extra computing)
-        self.sides =          ["top","front","bottom","back","left","right"] # I use to match indices to string for sides
+        self.open_moves     = [[i for i in range(9)] for i in range(6)]      # Elements get removed on moves made (avoids extra computing)
+        self.sides          = ["top","front","bottom","back","left","right"] # I use to match indices to string for sides
         self.winnable_sides = ["top","front","bottom","back","left","right"] # Elements get removed as they are won
-        self.unique_moves = self.generate_unique_moves()
-        self.sides_tied =  []
-        self.player_list = ["X", "O"] # Used in random first player
+        self.unique_moves   = self.generate_unique_moves()
+        self.sides_tied     = []
+        self.player_list    = ["X", "O"] # Used in random first player
         self.x_score = 0 
         self.x_moves = []  # excludes sides touched
-        self.x_wins =  []  # sides won
+        self.x_wins  = []  # sides won
         self.o_score = 0
-        self.o_wins =  []
+        self.o_wins  = []
         self.o_moves = []
         self.is_game_over = False
-        self.game_winner = None # None if tied game
+        self.game_winner  = None # None if tied game
         
         
-        
-        
-    
-    # X is always first player by convention?
+    # X is always first player by convention
     def first_player(self):
         return "X"
 
     def second_player(self):
         return "O"
 
-    # (Alternative) randomly pick first player.
-    # Call again to get the second player.
+    # (Alternative) randomly pick first player (X or O)
+    # Subsequent calls will return the second player
     def random_player(self):
         if len(self.player_list) == 1: 
             return self.player_list[0]
@@ -51,13 +46,10 @@ class CubicTicTacToe:
     #   I tried to provide two versions:
     #       (1) that returns just 1D/2D lists
     #       (2) that returns 1D list of tuples (might be easier to follow/debug)
-    #
-    # - Not the best naming schemes, sorry lol
-    # - We should remove copying if no one is 100% not modifying the return lists for performance?
 
     # 2D list representation for the total possible board moves
     def open_board_moves_list(self):
-        return copy.deepcopy(self.open_moves) 
+        return list(map(list, self.open_moves))
 
     # 1D List representation for the possible moves for the given side.
     def open_side_moves_list(self, side):
@@ -144,7 +136,7 @@ class CubicTicTacToe:
         
     # Handles moves crossing over to touched edges  
     def touch_edges(self, player, side, pos):
-        touching_edges = { # lol don't judge
+        touching_edges = {
             "top":      [[("back",2),("left",0)],[("back",1)],[("back",0),("right",2)],[("left",1)],   [],  [("right",1)], [("front",0),("left",2)],[("front",1)],[("front",2),("right",0)]],
             "front":    [[("left",2),("top",6)],[("top",7)],[("top",8),("right",0)],[("left",5)],      [],  [("right",3)],[("left",8),("bottom",0)],[("bottom",1)],[("bottom",2),("right",6)]],
             "bottom":   [[("left",8),("front",6)],[("front",7)],[("front",8),("right",6)],[("left",7)],[],  [("right",7)],[("left",6),("back",8)],[("back",7)],[("back",6),("right",8)]],
@@ -165,13 +157,6 @@ class CubicTicTacToe:
             self.is_game_over = True
             self.game_winner = None
             return
-
-        # if not self.winnable_sides:
-        #     self.is_game_over = True
-        #     if self.x_score > self.o_score:
-        #         self.game_winner = "X"
-        #     else:
-        #         self.game_winner = "O"
                 
         if self.x_score >= 4:
             self.is_game_over = True
@@ -285,15 +270,27 @@ class CubicTicTacToe:
         for i in back:
             print('%30s' % (i))
 
-    # Not entirely sure how impactful deepcopy 
-    # will have on performance with the amount we copy
+    # This was done previously using copy.deepcopy() but that can be expensive.
     def copy(self):
-      return copy.deepcopy(self)
+        new_game = CubicTicTacToe()
+        for i,key in enumerate(self.sides):
+            new_game.board[i]  = [i for i in self.board[i]]
+            new_game.cube[key] = new_game.board[i]
+        new_game.open_moves     = list(map(list, self.open_moves))
+        new_game.winnable_sides = [i for i in self.winnable_sides]
+        new_game.unique_moves   = [i for i in self.unique_moves]
+        new_game.sides_tied     = [i for i in self.sides_tied]
+        new_game.x_score        = self.x_score
+        new_game.x_moves        = [i for i in self.o_moves]
+        new_game.x_wins         = [i for i in self.x_wins]
+        new_game.o_score        = self.o_score
+        new_game.o_moves        = [i for i in self.o_moves]
+        new_game.o_wins         = [i for i in self.o_wins]
+        new_game.is_game_over   = self.is_game_over
+        new_game.game_winner    = self.game_winner
+        return new_game
+
   
-      
-      
-      
-      
       
       
       
