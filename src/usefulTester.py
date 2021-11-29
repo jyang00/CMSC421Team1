@@ -12,35 +12,51 @@ start_time = tI.perf_counter_ns()
 
 game = cT.CubicTicTacToe()
 
-## Here are some sample moves to get the game started 
-# (the X moves were decided by a depth=4 bot)
+## Game 1 - Tie (I tried for BEST moves, depth 4)
 # game.make_move('X', "top", 0)
-# game.make_move('O', "right", 5)
-# game.make_move('X', "left", 6)
-# game.make_move('O', "bottom", 3)
-# game.make_move('X', "top", 1)
-# game.make_move('O', "bottom", 4)
-# game.make_move('X', "top", 4)
-# game.make_move('O', "right", 4)
-# ## Above is 8 moves in
-# game.make_move('X', "right", 3)
-# game.make_move('O', "back", 5)
+# game.make_move('O', "top", 2)
+# game.make_move('X', "top", 8)
+# game.make_move('O', "right", 6)
+# game.make_move('X', "top", 6)
+# game.make_move('O', "right", 8)
+# game.make_move('X', "top", 3)
+# game.make_move('O', "right", 7)
+# game.make_move('X', "back", 3)
+# game.make_move('O', "front", 1)
 # game.make_move('X', "bottom", 0)
-# game.make_move('O', "back", 4)
-# ## Above is 12 moves in
-# game.make_move('X', "back", 7)
-# game.make_move('O', "back", 6)
-# game.make_move('X', "top", 2)
-# game.make_move('O', "top", 3)
-# ## Above is 16 moves in
-#game.make_move('X', "top", 5)
-#game.make_move('O', "top", 6)
+# game.make_move('O', "back", 8)
+# game.make_move('X', "top", 1)
+# game.make_move('O', "front", 3)
+# game.make_move('X', "front", 4)
+# game.make_move('O', "back", 7)
 
-game.display_boards()
+
+## Game 2 - Bot Win (I tried for immediate side wins, depth 4)
+# game.make_move('X', "top", 0)
+# game.make_move('O', "top", 8)
+# game.make_move('X', "bottom", 0)
+# game.make_move('O', "left", 4)
+# game.make_move('X', "top", 6)
+# game.make_move('O', "left", 5)
+# game.make_move('X', "top", 3)
+# game.make_move('O', "right", 8)
+# game.make_move('X', "bottom", 2)
+# game.make_move('O', "bottom", 1)
+# game.make_move('X', "right", 4)
+# game.make_move('O', "right", 2)
+# game.make_move('X', "back", 3)
+# game.make_move('O', "right", 1)
+# game.make_move('X', "front", 4)
+# game.make_move('O', "bottom", 7)
+# game.make_move('X', "bottom", 6)
+# game.make_move('O', "bottom", 4)
+
+
+
+
 
 end_time_1 = tI.perf_counter_ns()
 print(f"Play Moves Time: {end_time_1 - start_time}")
-
 
 
 # This means create a minimax bot with move X, against move O, that is player
@@ -49,14 +65,18 @@ bot = mM.MinimaxBot('X', 'O', 1, 1)
 
 # Depth = 4 means 3 moves, as the depth refers to how many levels of the tree
 # there are and each move passes between levels
-(side, spot) = bot.calculateTree(game, 4)
+(side, spot) = bot.calculateTree(game, 5)
 game.make_move('X', side, spot)
 
 # Print out the bot's move to see what it chose
 print(f'Bots move: {side}, {spot}')
 
-# This is 'your' move
-game.make_move('O', "left", 4)
+
+
+
+
+
+
 
 print(f'Number of prunings: {bot.count}')
 

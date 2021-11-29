@@ -7,7 +7,7 @@ import randomBot as rb
 import csv
 import time
 
-# A basic shell python script to run experiments and 
+# A basic shell python script to run experiments and
 # collect data into a standardized csv file to run statistical
 # analysis on later in R (will be writing this script after I
 # finish with this one)
@@ -17,7 +17,7 @@ import time
 # ./runExperiment [number] [N] [depth] [filename without .csv extension] [concat file?]
 
 # ------------------------------------ WHAT DO THE ARGS MEAN? ------------------------------------
-# [number] the number of the experiment you're running. For a quick explaination of what each 
+# [number] the number of the experiment you're running. For a quick explaination of what each
 # experiment is, please see the comments below and the corresponding google doc
 
 # [N] the total sample size you want the script to perform
@@ -25,15 +25,15 @@ import time
 # [depth] the depth you're testing, the range we agreed on was 3 to 5, but there is no check for
 # this, so you could very well just test more depths if your computer will allow you to do so
 
-# [filename] The name of the file you want to create or concat to the end of. This script already 
-# makes it a .csv already, so the extension is not needed to specify anything. It adds the .csv 
+# [filename] The name of the file you want to create or concat to the end of. This script already
+# makes it a .csv already, so the extension is not needed to specify anything. It adds the .csv
 # extention to make it more compatible and readible later without converting the file.
 
-# [concat file?] 0 or something else to specify if the tester wants the file to concat to the end 
-# of an already existing file. If the user wants to concat to the end of an already existing file 
-# have this value be 0. Otherwise if you're creating a new file have this as something OTHER THAN 
-# 0. If you're concating files, please BE CERTAIN you are only concating files for the same 
-# experiment, otherwise there will be errors when loading the final .cvs file and cause Susan a 
+# [concat file?] 0 or something else to specify if the tester wants the file to concat to the end
+# of an already existing file. If the user wants to concat to the end of an already existing file
+# have this value be 0. Otherwise if you're creating a new file have this as something OTHER THAN
+# 0. If you're concating files, please BE CERTAIN you are only concating files for the same
+# experiment, otherwise there will be errors when loading the final .cvs file and cause Susan a
 # headache later.
 
 experNum = sys.argv[1]
@@ -49,7 +49,7 @@ def exper1():
     mmbFirstWins = 0
     mmbSecondWins = 0
 
-    # N trials with Random Bot going first, next N trials with 
+    # N trials with Random Bot going first, next N trials with
     # minimax going first
     for i in range(0,trials):
         game = ct.CubicTicTacToe()
@@ -115,7 +115,7 @@ def exper2():
             mmbNewMove = mmbNew.calculateTree(game, depth)
             game.make_move(mmbNew.piece, mmbNewMove[0], mmbNewMove[1])
             t1 = time.time()
-            # Not really an average, but rather a sum of all the time it takes for this bot to 
+            # Not really an average, but rather a sum of all the time it takes for this bot to
             # run in total
             mmbNewAvgTimeFirst+= (t1-t0)
             if (game.is_game_over):
@@ -161,31 +161,31 @@ def exper2():
             mmbNewSecondWins +=1
         totalMovesOldFirst += moves
 
-    # calculating the true average of the time it takes to run everything. Calculated as the sum 
+    # calculating the true average of the time it takes to run everything. Calculated as the sum
     # of all times divided by the total number of moves
     oldFirstAvgTime = mmbOldAvgTimeFirst/totalMovesOldFirst
     oldSecondAvgTime = mmbOldAvgTimeSecond/totalMovesNewFirst
     newFirstAvgTime = mmbNewAvgTimeFirst/totalMovesNewFirst
     newSecondAvgTime = mmbNewAvgTimeSecond/totalMovesOldFirst
-    # return all the information into a single row/table that will be written to the final csv 
+    # return all the information into a single row/table that will be written to the final csv
     # file specified.
-    return [depth, mmbOldFirstWins, oldFirstAvgTime, mmbOldSecondWins, oldSecondAvgTime, 
+    return [depth, mmbOldFirstWins, oldFirstAvgTime, mmbOldSecondWins, oldSecondAvgTime,
                     mmbNewFirstWins, newFirstAvgTime, mmbNewSecondWins, newSecondAvgTime]
 
 def exper3():
     print("Minimax bot verses Random bot again, how long does it take at depth "+ str(depth)+
                     "\ntake some y moves into the game. Goal: Check depth over a range of values")
-    
+
     to_csv = []
-    # to_csv has members that are the rows of the final csv file, they follow the following order 
-    # to maintain correctness in the final csv file 
+    # to_csv has members that are the rows of the final csv file, they follow the following order
+    # to maintain correctness in the final csv file
     # ["depth" "move number", "Going First", "Minimax Bot time to Make Move", "Winner"]
-    
-    # for the Winner field, if the winner is not decided yet, the value is 0. 
+
+    # for the Winner field, if the winner is not decided yet, the value is 0.
     # If Random Bot wins, the value is -1
     # If Minimax Bot wins, the value is 1
 
-    # For my own sanity, the "going first" label is 0 if Minimax is going first 
+    # For my own sanity, the "going first" label is 0 if Minimax is going first
     # and 1 if Random Bot is going first
     # Here, Minimax Bot is going first
 
@@ -250,7 +250,7 @@ if __name__ == "__main__":
         print("got in commandline: experiment type "+experNum+ ", depth "+ str(depth)+", with "
                     +"trials "+str(trials))
         data = exper1()
-        fields = ['depth', 'Num of RB wins (first)', 'Num of RB wins (second)', 
+        fields = ['depth', 'Num of RB wins (first)', 'Num of RB wins (second)',
                         'Num of Minimax Bot (first)', 'Num of Minimax Bot (second)']
         with open(filename, openType) as csvfile:
             csvwriter = csv.writer(csvfile)
@@ -258,22 +258,22 @@ if __name__ == "__main__":
                 csvwriter.writerow(fields)
             csvwriter.writerow(data)
         csvfile.close()
-        
+
 
     elif experNum == "2":
         # The case of our Minimax bot verses another minimax bot,
-        # How many wins at depth specified on commandline and how 
+        # How many wins at depth specified on commandline and how
         # long does it take to learn and beat it?
         print("got in commandline: experiment type "+experNum+ ", depth "+ str(depth)+", with "
                         +"trials "+str(trials))
         data = exper2()
-        fields = ['depth', "Minimax Old Heuristic (first)", 
-                        "Old Heuristic Average Time per Move (first)", 
-                        "Minimax Old Heuristic (second)",  
-                        "Old Heuristic Average Time per Move (second)", 
-                        "Minimax New Heuristic (first)", 
-                        "New Heuristic Average Time per Move (first)", 
-                        "Minimax New Heuristic (second)",  
+        fields = ['depth', "Minimax Old Heuristic (first)",
+                        "Old Heuristic Average Time per Move (first)",
+                        "Minimax Old Heuristic (second)",
+                        "Old Heuristic Average Time per Move (second)",
+                        "Minimax New Heuristic (first)",
+                        "New Heuristic Average Time per Move (first)",
+                        "Minimax New Heuristic (second)",
                         "New Heuristic Average Time per Move (second)",]
         with open(filename, openType) as csvfile:
             csvwriter = csv.writer(csvfile)
@@ -284,7 +284,7 @@ if __name__ == "__main__":
 
     elif experNum == "3":
         # The case of minimax verses random bot where we're looking
-        # at how long it takes to make a move with depth x (specified 
+        # at how long it takes to make a move with depth x (specified
         # in the commandline) on move y.
         print("got in commandline: experiment type "+experNum+ ", depth "+ str(depth)+", with "
                         +"trials "+str(trials))
