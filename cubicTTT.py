@@ -274,21 +274,22 @@ class CubicTicTacToe:
     def copy(self):
         new_game = CubicTicTacToe()
         for i,key in enumerate(self.sides):
-            new_game.board[i]  = copy.copy(self.board[i])
+            new_game.board[i]  = [i for i in self.board[i]]
             new_game.cube[key] = new_game.board[i]
         new_game.open_moves     = list(map(list, self.open_moves))
-        new_game.winnable_sides = copy.copy(self.winnable_sides)
-        new_game.unique_moves   = copy.copy(self.unique_moves)
-        new_game.sides_tied     = copy.copy(self.sides_tied)
+        new_game.winnable_sides = [i for i in self.winnable_sides]
+        new_game.unique_moves   = [i for i in self.unique_moves]
+        new_game.sides_tied     = [i for i in self.sides_tied]
         new_game.x_score        = self.x_score
-        new_game.x_moves        = copy.copy(self.x_moves)
-        new_game.x_wins         = copy.copy(self.x_wins)
+        new_game.x_moves        = [i for i in self.o_moves]
+        new_game.x_wins         = [i for i in self.x_wins]
         new_game.o_score        = self.o_score
-        new_game.o_moves        = copy.copy(self.o_moves)
-        new_game.o_wins         = copy.copy(self.o_wins)
+        new_game.o_moves        = [i for i in self.o_moves]
+        new_game.o_wins         = [i for i in self.o_wins]
         new_game.is_game_over   = self.is_game_over
         new_game.game_winner    = self.game_winner
         return new_game
+
   
       
       
