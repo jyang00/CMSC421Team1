@@ -248,7 +248,7 @@ if __name__ == "__main__":
         # we want to see how many wins MiniMax can achieve verses
         # a random stupid player at depth specified in commandline
         print("got in commandline: experiment type "+experNum+ ", depth "+ str(depth)+", with "
-                    +"trials "+str(trials))
+                    +"trials "+str(trials)+", and concat "+sys.argv[5])
         data = exper1()
         fields = ['depth', 'Num of RB wins (first)', 'Num of RB wins (second)', 
                         'Num of Minimax Bot (first)', 'Num of Minimax Bot (second)']
@@ -265,7 +265,7 @@ if __name__ == "__main__":
         # How many wins at depth specified on commandline and how 
         # long does it take to learn and beat it?
         print("got in commandline: experiment type "+experNum+ ", depth "+ str(depth)+", with "
-                        +"trials "+str(trials))
+                    +"trials "+str(trials)+", and concat "+sys.argv[5])
         data = exper2()
         fields = ['depth', "Minimax Old Heuristic (first)", 
                         "Old Heuristic Average Time per Move (first)", 
@@ -287,7 +287,7 @@ if __name__ == "__main__":
         # at how long it takes to make a move with depth x (specified 
         # in the commandline) on move y.
         print("got in commandline: experiment type "+experNum+ ", depth "+ str(depth)+", with "
-                        +"trials "+str(trials))
+                    +"trials "+str(trials)+", and concat "+sys.argv[5])
         data = exper3()
         fields = ["depth" "move number", "Going First", "Minimax Bot time to Make Move", "Winner"]
         with open(filename, openType) as csvfile:
