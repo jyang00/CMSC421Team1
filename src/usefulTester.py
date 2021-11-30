@@ -6,7 +6,7 @@ Tests minimaxbot
 import cubicTTT as cT
 import minimaxbot as mM
 import time as tI
-
+import tracemalloc as tM
 
 start_time = tI.perf_counter_ns()
 
@@ -65,7 +65,11 @@ bot = mM.MinimaxBot('X', 'O', 1, 1)
 
 # Depth = 4 means 3 moves, as the depth refers to how many levels of the tree
 # there are and each move passes between levels
+# tM.start()
 (side, spot) = bot.calculateTree(game, 5)
+# current, peak = tM.get_traced_memory()
+# print(f"Current memory usage is {current / 10**6}MB; Peak was {peak / 10**6}MB")
+# tM.stop()
 game.make_move('X', side, spot)
 
 # Print out the bot's move to see what it chose
@@ -87,6 +91,7 @@ game.display_game()
 print(f'X-score: {game.x_score}, O-score: {game.o_score}')
 print(f'Heuristic Time (sec): {bot.time1/1000000000}, Copy Time (sec): {bot.time2/1000000000}')
 print(f'Make Move Time (sec): {bot.time3/1000000000}')
+print(f'Get Movelist Time (sec): {bot.time4/1000000000}')
 #print(f'Game Times ---- Time 1 (sec): {bot.time4/1000000000}, Time 2 (sec): {bot.time5/1000000000}')
 ## Depth 5 starts out around 45s, but drops to like 6 seconds 8 moves in, so I think we can use it
 

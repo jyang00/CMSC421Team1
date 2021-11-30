@@ -56,7 +56,9 @@ class MinimaxBot:
       self.leaf = False
       self.value = 0
       
+      start_time_4 = tI.perf_counter_ns()
       moveList = game.open_unique_moves()
+      self.Outer.time4 += (tI.perf_counter_ns() - start_time_4)
       if(len(moveList) != 0 and depth > 1):
         # Try every move
         
@@ -76,6 +78,8 @@ class MinimaxBot:
           self.Outer.time3 += (tI.perf_counter_ns() - start_time_3)
           
           child = MinimaxBot.Node(self.Outer, tempGame, self.alpha, self.beta, (1 + self.isMax) % 2, (self.player) % 2 + 1, depth - 1)
+          
+          # self.children.append((move, (child.alpha, child.beta)))
           self.children.append((move, child))
           
           if self.isMax:
@@ -108,13 +112,14 @@ class MinimaxBot:
     def getValue(self):
       ### Leaves never have this method called right now
       if (self.leaf):
-        #return (self.value, self.currMove)
+        print("I was here")
         return (self.value, ("-", 0))
       else:
         # If max node, use alpha + maxes
         if self.isMax:
           maxVal = self.Outer.MIN_VAL
           for (move, child) in self.children:
+            #  result = (child[1], move)
             result = (child.beta, move)
             currVal = result[0]
             if(currVal > maxVal):
@@ -125,6 +130,7 @@ class MinimaxBot:
         else:
           minVal = self.Outer.MAX_VAL
           for (move, child) in self.children:
+            # result = (child[0], move)
             result = (child.alpha, move)
             currVal = result[0]
             if(currVal < minVal):
