@@ -56,9 +56,9 @@ class MinimaxBot:
       self.leaf = False
       self.value = 0
       
-      start_time_4 = tI.perf_counter_ns()
+      start_time_4 = tI.process_time_ns()
       moveList = game.open_unique_moves()
-      self.Outer.time4 += (tI.perf_counter_ns() - start_time_4)
+      self.Outer.time4 += (tI.process_time_ns() - start_time_4)
       if(len(moveList) != 0 and depth > 1):
         # Try every move
         
@@ -66,16 +66,16 @@ class MinimaxBot:
           
           # Make a new child with the new move, with opposite isMax 
           # and player, and decremented depth
-          start_time_2 = tI.perf_counter_ns()
+          start_time_2 = tI.process_time_ns()
           tempGame = self.game.copy()
-          self.Outer.time2 += (tI.perf_counter_ns() - start_time_2)
+          self.Outer.time2 += (tI.process_time_ns() - start_time_2)
           
-          start_time_3 = tI.perf_counter_ns()
+          start_time_3 = tI.process_time_ns()
           if self.player == 1:
             tempGame.make_move("X", move[0], move[1])
           else:
             tempGame.make_move("O", move[0], move[1])
-          self.Outer.time3 += (tI.perf_counter_ns() - start_time_3)
+          self.Outer.time3 += (tI.process_time_ns() - start_time_3)
           
           child = MinimaxBot.Node(self.Outer, tempGame, self.alpha, self.beta, (1 + self.isMax) % 2, (self.player) % 2 + 1, depth - 1)
           
@@ -154,7 +154,7 @@ class MinimaxBot:
   
   
   def newheuristicAlg(self, currGame):
-    start_time_1 = tI.perf_counter_ns()
+    start_time_1 = tI.process_time_ns()
     total = 0
     # Calculate # of wins
     total += 50 * (currGame.x_score - currGame.o_score)
@@ -182,7 +182,7 @@ class MinimaxBot:
     
     # Negate it if game is player2, this would mean it did all subtractions backwards
     total *= pow(-1, (self.player + 1 % 2))
-    self.time1 += (tI.perf_counter_ns() - start_time_1)
+    self.time1 += (tI.process_time_ns() - start_time_1)
     return total
   
   

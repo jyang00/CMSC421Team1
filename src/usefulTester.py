@@ -8,7 +8,7 @@ import minimaxbot as mM
 import time as tI
 import tracemalloc as tM
 
-start_time = tI.perf_counter_ns()
+start_time = tI.process_time_ns()
 
 game = cT.CubicTicTacToe()
 
@@ -55,7 +55,7 @@ game = cT.CubicTicTacToe()
 
 
 
-end_time_1 = tI.perf_counter_ns()
+end_time_1 = tI.process_time_ns()
 print(f"Play Moves Time: {end_time_1 - start_time}")
 
 
@@ -84,7 +84,7 @@ print(f'Bots move: {side}, {spot}')
 
 print(f'Number of prunings: {bot.count}')
 
-end_time_2= tI.perf_counter_ns()
+end_time_2= tI.process_time_ns()
 print(f"Calculate Tree Time (sec): {(end_time_2 - end_time_1)/1000000000}")
 
 game.display_game()
