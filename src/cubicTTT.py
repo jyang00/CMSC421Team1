@@ -167,6 +167,15 @@ class CubicTicTacToe:
             self.is_game_over = True
             self.game_winner = "O"
             return
+        
+        if not self.winnable_sides:
+            self.is_game_over = True
+            if self.x_score > self.o_score:
+              self.game_winner = "X"
+            elif self.x_score < self.o_score:
+              self.game_winner = "O"
+            else:
+              self.game_winner = None
             
     def check_side_win(self, player, side):
         side = self.side_string(side)
@@ -211,7 +220,8 @@ class CubicTicTacToe:
     # A helper method. Pass in int to get corresponding string side
     # Index 0 = Top Board, Index 1 = Front board, etc.
     def side_string(self, side):
-        if side not in self.sides: side = self.sides[side]
+        if side not in self.sides:
+          side = self.sides[side]
         return side
 
     # called on gameboard initialization.
