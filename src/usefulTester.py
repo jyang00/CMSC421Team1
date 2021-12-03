@@ -51,8 +51,26 @@ game = cT.CubicTicTacToe()
 # game.make_move('X', "bottom", 6)
 # game.make_move('O', "bottom", 4)
 
-
-
+## Game 3 - Bot Win (bot was 2nd player = O. I tried for smart moves after 
+## making a random first move, I got completely blown out. I probably didn't 
+## look hard enough for smart moves though.)
+# game.make_move('X', "back", 3)
+# game.make_move('O', "top", 0)
+# game.make_move('X', "top", 8)
+# game.make_move('O', "bottom", 0)
+# game.make_move('X', "bottom", 8)
+# game.make_move('O', "top", 2)
+# game.make_move('X', "top", 1)
+# game.make_move('O', "bottom", 2)
+# game.make_move('X', "bottom", 1)
+# game.make_move('O', "right", 4)
+# game.make_move('X', "top", 7)
+# game.make_move('O', "top", 6)
+# game.make_move('X', "front", 4)
+# game.make_move('O', "top", 3)
+# game.make_move('X', "bottom", 7)
+# game.make_move('O', "bottom", 6)
+# game.make_move('X', "back", 4)
 
 
 end_time_1 = tI.process_time_ns()
@@ -63,14 +81,20 @@ print(f"Play Moves Time: {end_time_1 - start_time}")
 # 1, and uses heuristic alg 1 (the new one, the old one is any other integer)
 bot = mM.MinimaxBot('X', 'O', 1, 1)
 
+## Below line is used when bot is second player
+# bot = mM.MinimaxBot('O', 'X', 2, 1)
+
 # Depth = 4 means 3 moves, as the depth refers to how many levels of the tree
 # there are and each move passes between levels
 # tM.start()
-(side, spot) = bot.calculateTree(game, 5)
+(side, spot) = bot.calculateTree(game, 4)
 # current, peak = tM.get_traced_memory()
 # print(f"Current memory usage is {current / 10**6}MB; Peak was {peak / 10**6}MB")
 # tM.stop()
 game.make_move('X', side, spot)
+
+## Below line is used when bot is second player
+#game.make_move('O', side, spot)
 
 # Print out the bot's move to see what it chose
 print(f'Bots move: {side}, {spot}')

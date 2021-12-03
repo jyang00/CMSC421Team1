@@ -79,8 +79,8 @@ class MinimaxBot:
           
           child = MinimaxBot.Node(self.Outer, tempGame, self.alpha, self.beta, (1 + self.isMax) % 2, (self.player) % 2 + 1, depth - 1)
           
-          # self.children.append((move, (child.alpha, child.beta)))
-          self.children.append((move, child))
+          self.children.append((move, (child.alpha, child.beta)))
+          #self.children.append((move, child))
           
           if self.isMax:
             self.alpha = max(self.alpha, child.beta)
@@ -119,8 +119,8 @@ class MinimaxBot:
         if self.isMax:
           maxVal = self.Outer.MIN_VAL
           for (move, child) in self.children:
-            #  result = (child[1], move)
-            result = (child.beta, move)
+            result = (child[1], move)
+            #result = (child.beta, move)
             currVal = result[0]
             if(currVal > maxVal):
               maxVal = currVal
@@ -130,8 +130,8 @@ class MinimaxBot:
         else:
           minVal = self.Outer.MAX_VAL
           for (move, child) in self.children:
-            # result = (child[0], move)
-            result = (child.alpha, move)
+            result = (child[0], move)
+            #result = (child.alpha, move)
             currVal = result[0]
             if(currVal < minVal):
               minVal = currVal
