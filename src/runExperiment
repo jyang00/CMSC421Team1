@@ -48,7 +48,8 @@ def exper1():
     rbSecondWins = 0
     mmbFirstWins = 0
     mmbSecondWins = 0
-
+    tiesRB = 0
+    tiesMM = 0
     # N trials with Random Bot going first, next N trials with
     # minimax going first
     for i in range(0,trials):
@@ -66,8 +67,10 @@ def exper1():
         winner = game.game_winner
         if winner == 'X':
             rbFirstWins+=1
-        else:
+        elif winner == 'O':
             mmbSecondWins+=1
+        else:
+            tiesRB += 1
         print(f'Finished game {i+1} of {trials} before swapping order.')
 
     for i in range(0,trials):
@@ -85,96 +88,140 @@ def exper1():
         winner = game.game_winner
         if winner == 'X':
             mmbFirstWins+=1
-        else:
+        elif winner == 'O':
             rbSecondWins+=1
+        else:
+            tiesMM += 1
         print(f'Finished game {i+1} of {trials} after swapping order.')
 
-    return [depth, rbFirstWins, rbSecondWins, mmbFirstWins, mmbSecondWins]
+    return [depth, rbFirstWins, rbSecondWins, mmbFirstWins, mmbSecondWins, tiesRB, tiesMM]
 
 def exper2():
     print("Testing Minimax Bots our new heuristic verses the old heuristic.\n "+
                     "Timing between decisions is recorded as well and taken as an average")
-    mmbNewFirstWins = 0
-    mmbNewSecondWins = 0
-    mmbOldFirstWins = 0
-    mmbOldSecondWins = 0
-    mmbNewAvgTimeFirst = 0
-    mmbNewAvgTimeSecond = 0
-    mmbOldAvgTimeFirst = 0
-    mmbOldAvgTimeSecond = 0
-    totalMovesNewFirst = 0
-    totalMovesOldFirst = 0
-
+    # mmbNewFirstWins = 0
+    # mmbNewSecondWins = 0
+    # mmbOldFirstWins = 0
+    # mmbOldSecondWins = 0
+    # mmbNewAvgTimeFirst = 0
+    # mmbNewAvgTimeSecond = 0
+    # mmbOldAvgTimeFirst = 0
+    # mmbOldAvgTimeSecond = 0
+    # totalMovesNewFirst = 0
+    # totalMovesOldFirst = 0
+    data = []
     # First test, new Heuristic is going first
-    # for i in range(0, trials):
-    #     game = ct.CubicTicTacToe()
-    #     mmbNew = minimaxbot.MinimaxBot('X', 'O', 1, 1)
-    #     mmbOld = minimaxbot.MinimaxBot('O', 'X', 2, 0)
-    #     moves = 1
-    #     while game.is_game_over == False:
-    #         # get start times and end times before and after the call for mmb to pick next move
-    #         t0 = time.time()
-    #         mmbNewMove = mmbNew.calculateTree(game, depth)
-    #         game.make_move(mmbNew.piece, mmbNewMove[0], mmbNewMove[1])
-    #         t1 = time.time()
-    #         # Not really an average, but rather a sum of all the time it takes for this bot to
-    #         # run in total
-    #         mmbNewAvgTimeFirst+= (t1-t0)
-    #         if (game.is_game_over):
-    #             break
-    #         t0 = time.time()
-    #         mmbOldMove = mmbOld.calculateTree(game, depth)
-    #         game.make_move(mmbOld.piece, mmbOldMove[0], mmbOldMove[1])
-    #         t1 = time.time()
-    #         mmbOldAvgTimeSecond += (t1-t0)
-    #         moves +=1
-    #     winner = game.game_winner
-    #     if winner == 'X':
-    #         mmbNewFirstWins+=1
-    #     else:
-    #         mmbOldSecondWins+=1
-    #     # Gets total number of how many moves are being run in total across all trials
-    #     totalMovesNewFirst+=moves
-    #     print(f'Finished game {i+1} of {trials} before swapping order.')
+    for i in range(0, trials):
+        game = ct.CubicTicTacToe()
+        mmbNew = minimaxbot.MinimaxBot('X', 'O', 1, 1)
+        mmbOld = minimaxbot.MinimaxBot('O', 'X', 2, 0)
+        #moves = 1
+        mmbNewMoves = 0
+        mmbOldMoves = 0
+        
+        mmbNewTime = 0
+        mmbOldTime = 0
+        # mmbNewFirstWins = 0
+        # mmbOldSecondWins = 0
+        winnerText = ""
+        while game.is_game_over == False:
+            # get start times and end times before and after the call for mmb to pick next move
+            t0 = time.time()
+            mmbNewMove = mmbNew.calculateTree(game, depth)
+            game.make_move(mmbNew.piece, mmbNewMove[0], mmbNewMove[1])
+            t1 = time.time()
+            # Not really an average, but rather a sum of all the time it takes for this bot to
+            # run in total
+            #mmbNewAvgTimeFirst+= (t1-t0)
+            mmbNewTime += (t1 - t0)
+            mmbNewMoves += 1
+            if (game.is_game_over):
+                break
+            t0 = time.time()
+            mmbOldMove = mmbOld.calculateTree(game, depth)
+            game.make_move(mmbOld.piece, mmbOldMove[0], mmbOldMove[1])
+            t1 = time.time()
+            #mmbOldAvgTimeSecond += (t1-t0)
+            mmbOldTime += (t1 - t0)
+            mmbOldMoves += 1
+            #moves +=1
+        winner = game.game_winner
+        # if winner == 'X':
+        #     mmbNewFirstWins+=1
+        # else:
+        #     mmbOldSecondWins+=1
+        if winner == 'X':
+          winnerText = "new"
+        elif winner == 'O':
+          winnerText = "old"
+        else:
+          winnerText = "tie"
+        # Adds the relevant data
+        data.append([depth, mmbNewTime/mmbNewMoves, mmbOldTime/mmbOldMoves, winnerText, "new"])
+        # Gets total number of how many moves are being run in total across all trials
+        #totalMovesNewFirst+=moves
+        print(f'Finished game {i+1} of {trials} before swapping order.')
+        #data.append([depth, mmbNewFirstWins, mmbNewAvgTimeFirst])
         
     # Second test, old Heuristic is going first
     for i in range(0, trials):
         game = ct.CubicTicTacToe()
         mmbOld = minimaxbot.MinimaxBot('X', 'O', 1, 0)
         mmbNew = minimaxbot.MinimaxBot('O', 'X', 2, 1)
-        moves = 1
+        #moves = 1
+        mmbNewMoves = 0
+        mmbOldMoves = 0
+        
+        mmbNewTime = 0
+        mmbOldTime = 0
+        # mmbNewSecondWins = 0
+        # mmbOldFirstWins = 0
+        winnerText = ""
         while game.is_game_over == False:
             t0 = time.time()
             mmbOldMove = mmbOld.calculateTree(game, depth)
             game.make_move(mmbOld.piece, mmbOldMove[0], mmbOldMove[1])
             t1 = time.time()
-            mmbOldAvgTimeFirst += (t1-t0)
+            #mmbOldAvgTimeFirst += (t1-t0)
+            mmbOldTime += (t1 - t0)
+            mmbOldMoves += 1
             if (game.is_game_over):
                 break
             t0 = time.time()
             mmbNewMove = mmbNew.calculateTree(game, depth)
             game.make_move(mmbNew.piece, mmbNewMove[0], mmbNewMove[1])
             t1 = time.time()
-            mmbNewAvgTimeSecond += (t1-t0)
-            moves+=1
+            #mmbNewAvgTimeSecond += (t1-t0)
+            mmbNewTime += (t1 - t0)
+            mmbNewMoves += 1
+            #moves+=1
         winner = game.game_winner
+        # if winner == 'X':
+        #     mmbOldFirstWins +=1
+        # else:
+        #     mmbNewSecondWins +=1
         if winner == 'X':
-            mmbOldFirstWins +=1
+          winnerText = "old"
+        elif winner == 'O':
+          winnerText = "new"
         else:
-            mmbNewSecondWins +=1
-        totalMovesOldFirst += moves
+          winnerText = "tie"
+        # Adds the relevant data
+        data.append([depth, mmbNewTime/mmbNewMoves, mmbOldTime/mmbOldMoves, winnerText, "old"])
+        #totalMovesOldFirst += moves
         print(f'Finished game {i+1} of {trials} after swapping order.')
 
     # calculating the true average of the time it takes to run everything. Calculated as the sum
     # of all times divided by the total number of moves
-    oldFirstAvgTime = mmbOldAvgTimeFirst/totalMovesOldFirst
-    oldSecondAvgTime = mmbOldAvgTimeSecond/totalMovesNewFirst
-    newFirstAvgTime = mmbNewAvgTimeFirst/totalMovesNewFirst
-    newSecondAvgTime = mmbNewAvgTimeSecond/totalMovesOldFirst
+    # oldFirstAvgTime = mmbOldAvgTimeFirst/totalMovesOldFirst
+    # oldSecondAvgTime = mmbOldAvgTimeSecond/totalMovesNewFirst
+    # newFirstAvgTime = mmbNewAvgTimeFirst/totalMovesNewFirst
+    # newSecondAvgTime = mmbNewAvgTimeSecond/totalMovesOldFirst
     # return all the information into a single row/table that will be written to the final csv
     # file specified.
-    return [depth, mmbOldFirstWins, oldFirstAvgTime, mmbOldSecondWins, oldSecondAvgTime,
-                    mmbNewFirstWins, newFirstAvgTime, mmbNewSecondWins, newSecondAvgTime]
+    return data
+    #return [depth, mmbOldFirstWins, oldFirstAvgTime, mmbOldSecondWins, oldSecondAvgTime,
+                    #mmbNewFirstWins, newFirstAvgTime, mmbNewSecondWins, newSecondAvgTime]
 
 def exper3():
     print("Minimax bot verses Random bot again, how long does it take at depth "+ str(depth)+
@@ -257,7 +304,8 @@ if __name__ == "__main__":
                     +"trials "+str(trials)+", and concat "+sys.argv[5])
         data = exper1()
         fields = ['depth', 'Num of RB wins (first)', 'Num of RB wins (second)',
-                        'Num of Minimax Bot (first)', 'Num of Minimax Bot (second)']
+                        'Num of Minimax wins (first)', 'Num of Minimax wins (second)',
+                        'Num of ties (RB first)', 'Num of ties (Minimax first)']
         with open(filename, openType) as csvfile:
             csvwriter = csv.writer(csvfile)
             if sys.argv[5] != '0':
@@ -273,19 +321,22 @@ if __name__ == "__main__":
         print("got in commandline: experiment type "+experNum+ ", depth "+ str(depth)+", with "
                     +"trials "+str(trials)+", and concat "+sys.argv[5])
         data = exper2()
-        fields = ['depth', "Minimax Old Heuristic (first)",
-                        "Old Heuristic Average Time per Move (first)",
-                        "Minimax Old Heuristic (second)",
-                        "Old Heuristic Average Time per Move (second)",
-                        "Minimax New Heuristic (first)",
-                        "New Heuristic Average Time per Move (first)",
-                        "Minimax New Heuristic (second)",
-                        "New Heuristic Average Time per Move (second)",]
+        # fields = ['depth', "Minimax Old Heuristic (first)",
+        #                 "Old Heuristic Average Time per Move (first)",
+        #                 "Minimax Old Heuristic (second)",
+        #                 "Old Heuristic Average Time per Move (second)",
+        #                 "Minimax New Heuristic (first)",
+        #                 "New Heuristic Average Time per Move (first)",
+        #                 "Minimax New Heuristic (second)",
+        #                 "New Heuristic Average Time per Move (second)",]
+        fields = ['depth', 'Minimax NewHeur Avg Time', 'Minimax OldHeur Avg Time', 'Winner', 'Who First']
         with open(filename, openType) as csvfile:
             csvwriter = csv.writer(csvfile)
             if sys.argv[5] != '0':
                 csvwriter.writerow(fields)
-            csvwriter.writerow(data)
+            #csvwriter.writerow(data)
+            for row in data:
+              csvwriter.writerow(row)
         csvfile.close()
 
     elif experNum == "3":
