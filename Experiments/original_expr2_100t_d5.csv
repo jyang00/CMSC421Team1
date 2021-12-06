@@ -1,0 +1,2 @@
+depth,Minimax Old Heuristic (first),Old Heuristic Average Time per Move (first),Minimax Old Heuristic (second),Old Heuristic Average Time per Move (second),Minimax New Heuristic (first),New Heuristic Average Time per Move (first),Minimax New Heuristic (second),New Heuristic Average Time per Move (second)
+5,0,4.031309200657739,0,3.025361240208149,100,2.1595546501874923,100,2.017279862827725
