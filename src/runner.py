@@ -24,5 +24,5 @@ if len(sys.argv) > 1:
   else:
     ## Experiment 3 ##
     subprocess.check_call(['python', 'runExperiment', '3', '30', '3', 'exp3_d3_data', '1'], stdout=sys.stdout)
-    subprocess.check_call(['python', 'runExperiment', '3', '30', '4', 'exp4_d4_data', '1'], stdout=sys.stdout)
-    subprocess.check_call(['python', 'runExperiment', '3', '30', '5', 'exp5_d5_data', '1'], stdout=sys.stdout)
+    subprocess.check_call(['python', 'runExperiment', '3', '30', '4', 'exp3_d4_data', '1'], stdout=sys.stdout)
+    subprocess.check_call(['python', 'runExperiment', '3', '30', '5', 'exp3_d5_data', '1'], stdout=sys.stdout)
