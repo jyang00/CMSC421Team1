@@ -290,6 +290,152 @@ def exper3():
 
     return to_csv
 
+def exper4():
+    print("Testing Minimax Bots our new heuristic verses the old heuristic.\n "+
+                    "Recording pruning per move")
+    data = []
+    # First test, new Heuristic is going first
+    for i in range(0, 5):
+        game = ct.CubicTicTacToe()
+        mmbNew = minimaxbot.MinimaxBot('X', 'O', 1, 1)
+        mmbOld = minimaxbot.MinimaxBot('O', 'X', 2, 0)
+        mmbNewMoves = 0
+        mmbOldMoves = 0
+        
+        mmbNewTime = 0
+        mmbOldTime = 0
+        winnerText = ""
+        while game.is_game_over == False:
+
+            mmbNewMove = mmbNew.calculateTree(game, depth)
+            game.make_move(mmbNew.piece, mmbNewMove[0], mmbNewMove[1])
+            newPrune = mmbNew.count
+            mmbNewMoves += 1
+            if (game.is_game_over):
+                break
+            
+            mmbOldMove = mmbOld.calculateTree(game, depth)
+            game.make_move(mmbOld.piece, mmbOldMove[0], mmbOldMove[1])
+            oldPrune = mmbOld.count
+            mmbOldMoves += 1
+            
+            data.append([depth, mmbNewMoves, newPrune, oldPrune, "--", "new"])
+        winner = game.game_winner
+        if winner == 'X':
+          winnerText = "new"
+        elif winner == 'O':
+          winnerText = "old"
+        else:
+          winnerText = "tie"
+        # Adds the relevant data
+        data.append([depth, 0, 0, 0, winnerText, "new"])
+        print(f'Finished game {i+1} of 5 before swapping order.')
+        
+    # Second test, old Heuristic is going first
+    for i in range(0, 5):
+        game = ct.CubicTicTacToe()
+        mmbOld = minimaxbot.MinimaxBot('X', 'O', 1, 0)
+        mmbNew = minimaxbot.MinimaxBot('O', 'X', 2, 1)
+        mmbNewMoves = 0
+        mmbOldMoves = 0
+        
+        mmbNewTime = 0
+        mmbOldTime = 0
+        winnerText = ""
+        while game.is_game_over == False:
+            
+            mmbOldMove = mmbOld.calculateTree(game, depth)
+            game.make_move(mmbOld.piece, mmbOldMove[0], mmbOldMove[1])
+            oldPrune = mmbOld.count
+            mmbOldMoves += 1
+            if (game.is_game_over):
+                break
+            
+            mmbNewMove = mmbNew.calculateTree(game, depth)
+            game.make_move(mmbNew.piece, mmbNewMove[0], mmbNewMove[1])
+            newPrune = mmbNew.count
+            mmbNewMoves += 1
+            
+            data.append([depth, mmbNewMoves, newPrune, oldPrune, "--", "old"])
+        winner = game.game_winner
+        if winner == 'X':
+          winnerText = "old"
+        elif winner == 'O':
+          winnerText = "new"
+        else:
+          winnerText = "tie"
+        # Adds the relevant data
+        data.append([depth, 0, 0, 0, winnerText, "old"])
+        print(f'Finished game {i+1} of 5 after swapping order.')
+    # return all the information into a single row/table that will be written to the final csv
+    # file specified.
+    return data
+
+def exper5(heuristic):
+    print("Recording pruning for a heuristics vs random bot swapping order")
+    rbFirstWins = 0
+    rbSecondWins = 0
+    mmbFirstWins = 0
+    mmbSecondWins = 0
+    tiesRB = 0
+    tiesMM = 0
+    data = []
+    botText = ""
+    if heuristic == 1:
+      botText = "new"
+    else:
+      botText = "old"
+    # N trials with Random Bot going first, next N trials with
+    # minimax going first
+    for i in range(0,30):
+        game = ct.CubicTicTacToe()
+        randomBot = rb.Random_Bot(game, 'X')
+        mmb = minimaxbot.MinimaxBot('O', 'X', 2, heuristic)
+        moves = 0
+        while game.is_game_over == False:
+            randomBot.play_random_move(game)
+            if (game.is_game_over):
+                break
+            mmbMove = mmb.calculateTree(game, depth)
+            game.make_move(mmb.piece, mmbMove[0], mmbMove[1])
+            moves+=1
+            prunes = mmb.count
+            data.append([depth, moves, prunes, "--", botText, "RB"])
+        winner = game.game_winner
+        if winner == 'X':
+            rbFirstWins+=1
+        elif winner == 'O':
+            mmbSecondWins+=1
+        else:
+            tiesRB += 1
+        print(f'Finished game {i+1} of 30 before swapping order.')
+        data.append([depth, 0, 0, winner, botText, "RB"])
+    for i in range(0,30):
+        game = ct.CubicTicTacToe()
+        mmb = minimaxbot.MinimaxBot('X', 'O', 1, heuristic)
+        randomBot = rb.Random_Bot(game, 'O')
+        moves = 0
+        while game.is_game_over == False:
+            mmbMove = mmb.calculateTree(game, depth)
+            game.make_move(mmb.piece, mmbMove[0], mmbMove[1])
+            if (game.is_game_over):
+                break
+            randomBot.play_random_move(game)
+            moves+=1
+            prunes = mmb.count
+            data.append([depth, moves, prunes, "--", botText, "MMB"])
+        winner = game.game_winner
+        if winner == 'X':
+            mmbFirstWins+=1
+        elif winner == 'O':
+            rbSecondWins+=1
+        else:
+            tiesMM += 1
+        print(f'Finished game {i+1} of 30 after swapping order.')
+        data.append([depth, 0, 0, winner, botText, "MMB"])
+    return data
+
+
 if __name__ == "__main__":
     if sys.argv[5] == '0':
         openType = 'a'
@@ -353,3 +499,36 @@ if __name__ == "__main__":
                 csvwriter.writerow(fields)
             csvwriter.writerows(data)
         csvfile.close()
+    
+    elif experNum == "4":
+      # Pruning for 5 trials
+      print("got in commandline: experiment type "+experNum)
+      data = exper4()
+      fields = ["depth", "move number", "Minimax NewHeur Prunings", "Minimax OldHeur Prunings", "Winner", "Who First"]
+      with open(filename, openType) as csvfile:
+            csvwriter = csv.writer(csvfile)
+            csvwriter.writerow(fields)
+            csvwriter.writerows(data)
+      csvfile.close()
+      
+    elif experNum == "5":
+      # Pruning for 30 trials vs random
+      print("got in commandline: experiment type "+experNum)
+      data = exper5(1)
+      fields = ["depth", "move number", "Prunings", "Winner", "Which Heur", "Who First"]
+      data2 = exper5(2)
+      with open(filename, openType) as csvfile:
+            csvwriter = csv.writer(csvfile)
+            csvwriter.writerow(fields)
+            csvwriter.writerows(data)
+            csvwriter.writerows(data2)
+      csvfile.close()
+      
+      
+      
+      
+      
+      
+      
+      
+      

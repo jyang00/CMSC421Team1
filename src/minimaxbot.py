@@ -142,6 +142,7 @@ class MinimaxBot:
   # Make the tree structure
   def calculateTree(self, currGame, depth):
     self.nodeTable = {}
+    self.count = 0
     self.root = MinimaxBot.Node(self, currGame.copy(), self.MIN_VAL, self.MAX_VAL, 1, self.player, depth)
     return self.root.getValue()[1]
     
